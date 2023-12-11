@@ -44,32 +44,12 @@ public class MemberExceptionHandler {
 
     /**
      * 커스텀 예외 처리
-     * 해당 회원이 없을 시 예외 처리
-     */
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<?> handleUserNotFoundExceptions(UserNotFoundException ex) {
-        return ResponseEntity.internalServerError()
-                .body(commonException(HttpStatus.NOT_FOUND.value(), ex.getMessage(), ex.getClass().getName()));
-    }
-
-    /**
-     * 커스텀 예외 처리
      * 회원가입 시 비밀번호 확인 란이 일치하지 않을 때 예외 처리
      */
     @ExceptionHandler(PasswordNotMatchException.class)
     public ResponseEntity<?> handlePasswordNotMatchExceptions(PasswordNotMatchException ex) {
         return ResponseEntity.badRequest()
                 .body(commonException(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), ex.getClass().getName()));
-    }
-
-    /**
-     * 커스텀 예외 처리
-     * 유효하지 않은 토큰에 대한 예외 처리
-     */
-    @ExceptionHandler(InvalidTokenException.class)
-    public ResponseEntity<?> handleInvalidTokenExceptions(InvalidTokenException ex) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(commonException(HttpStatus.UNAUTHORIZED.value(), ex.getMessage(), ex.getClass().getName()));
     }
 
     public ResponseDto<ErrorResponseDto> commonException(int status, String message, String type) {

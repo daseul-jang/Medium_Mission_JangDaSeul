@@ -1,5 +1,7 @@
 package com.ll.medium.global.exception;
 
+import com.ll.medium.domain.member.exception.InvalidTokenException;
+import com.ll.medium.domain.member.exception.UserNotFoundException;
 import com.ll.medium.global.dto.ErrorResponseDto;
 import com.ll.medium.global.dto.ResponseDto;
 import org.springframework.beans.TypeMismatchException;
@@ -21,6 +23,26 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    /**
+     * 커스텀 예외 처리
+     * 해당 회원이 없을 시 예외 처리
+     */
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<?> handleUserNotFoundExceptions(UserNotFoundException ex) {
+        return ResponseEntity.internalServerError()
+                .body(commonException(HttpStatus.NOT_FOUND.value(), ex.getMessage(), ex.getClass().getName()));
+    }
+
+    /**
+     * 커스텀 예외 처리
+     * 유효하지 않은 토큰에 대한 예외 처리
+     */
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<?> handleInvalidTokenExceptions(InvalidTokenException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(commonException(HttpStatus.UNAUTHORIZED.value(), ex.getMessage(), ex.getClass().getName()));
+    }
+
     /**
      * 데이터베이스 관련 예외 처리
      */
