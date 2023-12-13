@@ -1,6 +1,9 @@
+import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import './globals.css';
+import Navbar from '@/components/global/Navbar';
+import ReactQueryProvider from '@/context/ReactQueryProvider';
+import AuthProvider from '@/context/AuthProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -16,7 +19,19 @@ export default function RootLayout({
 }) {
   return (
     <html lang='ko'>
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <AuthProvider>
+          <ReactQueryProvider>
+            <header className='top-0 bg-white border-b z-[999]'>
+              <Navbar />
+            </header>
+            <main className='flex min-h-screen flex-col items-center justify-between p-24'>
+              {children}
+            </main>
+            <div id='portal'></div>
+          </ReactQueryProvider>
+        </AuthProvider>
+      </body>
     </html>
   );
 }

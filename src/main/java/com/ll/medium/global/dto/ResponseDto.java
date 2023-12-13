@@ -13,10 +13,10 @@ public class ResponseDto<T> {
     private String message;
     private T data;
 
-    public ResponseDto(int status, String message, T error) {
+    public ResponseDto(int status, String message, T data) {
         this.result = status >= 200 && status < 400;
         this.status = status;
         this.message = message;
-        this.data = error;
+        this.data = data;
     }
 }

@@ -2,10 +2,8 @@ package com.ll.medium.domain.member.member.entity;
 
 import com.ll.medium.domain.post.post.entity.Post;
 import com.ll.medium.global.entity.BaseEntity;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
+import com.ll.medium.global.security.entity.JwtRefreshToken;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,6 +23,12 @@ public class Member extends BaseEntity {
 
     @Column(nullable = false)
     private String password;
+
+    @Enumerated(EnumType.STRING)
+    private MemberRole role;
+
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
+    private JwtRefreshToken refreshToken;
 
     @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
     private List<Post> posts;
