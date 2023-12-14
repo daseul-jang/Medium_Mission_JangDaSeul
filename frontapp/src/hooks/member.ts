@@ -3,8 +3,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { fetchJoin } from './api-fetcher/memberFetcher';
 import { useRouter } from 'next/navigation';
 
-interface JoinProps {}
-
 export const useJoin = (member: JoinInfo, afterAuthViewHandler: () => void) => {
   const router = useRouter();
   const queryClient = useQueryClient();

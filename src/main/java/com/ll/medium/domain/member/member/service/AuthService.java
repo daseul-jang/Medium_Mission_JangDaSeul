@@ -22,8 +22,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Log4j2
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class AuthService {
     private final MemberService memberService;
     private final MemberRepository memberRepository;

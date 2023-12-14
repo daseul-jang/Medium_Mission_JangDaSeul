@@ -1,5 +1,5 @@
-import { AuthType } from '../global/Navbar';
-import SocialBtn from '../global/ui/button/SocialBtn';
+import { AuthType } from '../../global/Navbar';
+import SocialBtn from '../../global/ui/button/SocialBtn';
 
 interface Props {
   authType: AuthType;

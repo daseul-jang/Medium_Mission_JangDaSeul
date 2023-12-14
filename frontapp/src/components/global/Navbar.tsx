@@ -4,10 +4,11 @@ import { useEffect, useState } from 'react';
 import SearchIcon from './ui/icon/SearchIcon';
 import ModalPotal from './modal/ModalPordal';
 import Modal from './modal/Modal';
-import AuthArea from '../auth/AuthArea';
-import AuthFrom from '../auth/AuthForm';
-import JoinAfter from '../auth/JoinAfter';
+import AuthArea from '../member/auth/AuthArea';
+import AuthFrom from '../member/auth/AuthForm';
+import JoinAfter from '../member/auth/JoinAfter';
 import { signOut, useSession } from 'next-auth/react';
+import WriteIcon from './ui/icon/WriteIcon';
 
 export type AuthType = 'login' | 'join';
 
@@ -56,18 +57,24 @@ export default function Navbar() {
           />
         </div>
       </div>
-      <div className='flex-none gap-2'>
+      <div className='flex-none gap-3'>
         {user ? (
-          <button
-            className='rounded-full bg-base-200 hover:bg-base-300 py-2 px-3 text-sm'
-            onClick={() =>
-              signOut({
-                callbackUrl: '/',
-              })
-            }
-          >
-            Sign out
-          </button>
+          <>
+            <button className='text-sm flex items-center gap-1 mr-3'>
+              <WriteIcon />
+              Write
+            </button>
+            <button
+              className='rounded-full bg-base-200 hover:bg-base-300 py-2 px-3 text-sm'
+              onClick={() =>
+                signOut({
+                  callbackUrl: '/',
+                })
+              }
+            >
+              Sign out
+            </button>
+          </>
         ) : (
           <>
             <button

@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { AuthType } from '../global/Navbar';
-import LeftAngleBracket from '../global/ui/icon/LeftAngleBracket';
-import AuthInput from '../global/ui/input/AuthInput';
+import { AuthType } from '../../global/Navbar';
+import LeftAngleBracket from '../../global/ui/icon/LeftAngleBracket';
+import AuthInput from '../../global/ui/input/AuthInput';
 import { JoinInfo, LoginInfo } from '@/model/member';
 import { useJoin } from '@/hooks/member';
 import { signIn } from 'next-auth/react';

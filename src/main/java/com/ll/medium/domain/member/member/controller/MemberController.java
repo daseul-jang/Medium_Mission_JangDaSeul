@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Log4j2
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/members")
+@RequestMapping("/api/v1/member")
 public class MemberController {
     private final AuthService authService;
     private final MemberService memberService;
@@ -46,9 +46,7 @@ public class MemberController {
                 new ResponseDto<>(
                         HttpStatus.OK.value(),
                         "토큰 발급 성공",
-                        authService.newAccessToken(refreshToken)
-                )
-        );
+                        authService.newAccessToken(refreshToken)));
     }
 
     @PostMapping("/join")
@@ -64,6 +62,8 @@ public class MemberController {
                 .build());
 
         return ResponseEntity.ok(new ResponseDto<>(
-                HttpStatus.CREATED.value(), "성공적으로 가입되었습니다!", new MemberDto(member)));
+                HttpStatus.CREATED.value(),
+                "성공적으로 가입되었습니다!",
+                new MemberDto(member)));
     }
 }

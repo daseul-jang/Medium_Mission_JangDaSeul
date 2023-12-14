@@ -2,6 +2,8 @@ package com.ll.medium.domain.member.exception;
 
 import com.ll.medium.global.dto.ErrorResponseDto;
 import com.ll.medium.global.dto.ResponseDto;
+import com.ll.medium.global.exception.GlobalExceptionHandler;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -11,8 +13,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.Map;
 
-@RestControllerAdvice
+@RestControllerAdvice(basePackages = "com.ll.medium.member.member.controller")
+@RequiredArgsConstructor
 public class MemberExceptionHandler {
+    private final GlobalExceptionHandler globalExceptionHandler;
+
     /**
      * 로그인 실패시 예외 처리
      */
@@ -49,20 +54,11 @@ public class MemberExceptionHandler {
     @ExceptionHandler(PasswordNotMatchException.class)
     public ResponseEntity<?> handlePasswordNotMatchExceptions(PasswordNotMatchException ex) {
         return ResponseEntity.badRequest()
-                .body(commonException(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), ex.getClass().getName()));
-    }
-
-    public ResponseDto<ErrorResponseDto> commonException(int status, String message, String type) {
-        ErrorResponseDto error = ErrorResponseDto.builder()
-                .status(status)
-                .message(message)
-                .type(type)
-                .build();
-
-        return ResponseDto.<ErrorResponseDto>builder()
-                .result(false)
-                .status(error.getStatus())
-                .data(error)
-                .build();
+                .body(globalExceptionHandler.commonException(
+                                HttpStatus.BAD_REQUEST.value(),
+                                ex.getMessage(),
+                                ex.getClass().getName()
+                        )
+                );
     }
 }

@@ -21,7 +21,13 @@ public class Post extends BaseEntity {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
+    private boolean isPublic = true;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", nullable = false)
     private Member writer;
+
+    public boolean getIsPublic() {
+        return this.isPublic;
+    }
 }

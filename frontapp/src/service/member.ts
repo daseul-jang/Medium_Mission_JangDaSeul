@@ -1,14 +1,14 @@
-import { BASE_URL, HEADERS } from './setting';
+import { BASE_URL, CUSTOM_HEADERS } from './setting';
 import { JoinInfo, LoginInfo } from '@/model/member';
 
-const MEMBER_URL = BASE_URL + '/members';
+const MEMBER_URL = BASE_URL + '/member';
 
 export const loginMember = async (member: LoginInfo) => {
   console.log('로그인 서비스');
 
   try {
     const res = await fetch(`${MEMBER_URL}/login`, {
-      ...HEADERS,
+      ...CUSTOM_HEADERS,
       cache: 'no-store',
       method: 'POST',
       body: JSON.stringify(member),
@@ -30,7 +30,7 @@ export const addMember = async (member: JoinInfo) => {
 
   try {
     const res = await fetch(`${MEMBER_URL}/join`, {
-      ...HEADERS,
+      ...CUSTOM_HEADERS,
       cache: 'no-store',
       method: 'POST',
       body: JSON.stringify(member),
