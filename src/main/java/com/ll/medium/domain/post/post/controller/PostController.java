@@ -10,9 +10,8 @@ import com.ll.medium.global.dto.ResponseDto;
 import com.ll.medium.global.security.authentication.UserPrincipal;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Log4j2
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/post")
@@ -49,10 +49,20 @@ public class PostController {
      */
     @GetMapping("/latest-list")
     public ResponseEntity<?> latestList() {
+        Page<Post> postEntities = postService.findLatestPosts();
+        List<PostDto> postDtos = postEntities.stream().map(PostDto::new).toList();
+        log.info(postDtos.toString());
+
+        Page<PostDto> pagePosts = new PageImpl<>(
+                postDtos,
+                postEntities.getPageable(),
+                postEntities.getTotalElements());
+
+        log.info(pagePosts.getContent().getFirst().getWriter().getUsername());
         return ResponseEntity.ok(new ResponseDto<>(
                 HttpStatus.OK.value(),
                 "최신 글 30개 조회 성공",
-                postService.findLatestPosts()));
+                pagePosts));
     }
 
     /**
@@ -73,7 +83,10 @@ public class PostController {
     @PostMapping("/write")
     public ResponseEntity<?> write(@AuthenticationPrincipal UserPrincipal userPrincipal,
                                    @Valid @RequestBody WriteRequestDto reqDto) {
+        log.info("write controller username: {}", userPrincipal.getUsername());
+        log.info("write controller reqDto: {}", reqDto.toString());
         Member memberEntity = memberService.getMember(userPrincipal.getUsername());
+        log.info("write controller memberEntity: {}", memberEntity.getUsername());
         Post postEntity = postService.write(PostDto.toEntity(new PostDto(reqDto, memberEntity)));
 
         return ResponseEntity.ok(new ResponseDto<>(

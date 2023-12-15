@@ -2,8 +2,8 @@ import WriteForm from '@/components/post/WriteForm';
 
 export default function WritePage() {
   return (
-    <div>
+    <section className='w-full max-w-screen-sm mx-auto h-full'>
       <WriteForm />
-    </div>
+    </section>
   );
 }

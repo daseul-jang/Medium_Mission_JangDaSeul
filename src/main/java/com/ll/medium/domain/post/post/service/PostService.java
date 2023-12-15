@@ -38,6 +38,13 @@ public class PostService {
         Pageable pageable = PageRequest.of(0, 30, Sort.by(Sort.Direction.DESC, "createDate"));
         return postRepository.findByIsPublicTrueOrderByCreateDateDesc(pageable);
     }
+    /*public Page<Post> findLatestPosts() {
+        Pageable pageable = PageRequest.of(0, 30, Sort.by("createDate").descending());
+        return postRepository.findByIsPublicTrue(pageable);
+    }*/
+    /*public Page<Post> findLatestPosts(Pageable pageable) {
+        return postRepository.findByIsPublicTrueOrderByCreateDateDesc(pageable);
+    }*/
 
     /**
      * 페이지네이션이 적용된 리스트

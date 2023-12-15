@@ -33,7 +33,7 @@ public class MemberDto {
         this.posts = member.getPosts();
     }
 
-    public Member toEntity(final MemberDto dto) {
+    public static Member toEntity(final MemberDto dto) {
         return Member.builder()
                 .id(dto.getId())
                 .username(dto.getUsername())

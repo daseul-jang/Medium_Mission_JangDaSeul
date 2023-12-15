@@ -1,5 +1,6 @@
 package com.ll.medium.domain.post.post.dto;
 
+import com.ll.medium.domain.member.member.dto.MemberDto;
 import com.ll.medium.domain.member.member.entity.Member;
 import com.ll.medium.domain.post.post.entity.Post;
 import lombok.AccessLevel;
@@ -19,13 +20,13 @@ public class PostDto {
     private boolean isPublic;
     private LocalDateTime createDate;
     private LocalDateTime modifyDate;
-    private Member writer;
+    private MemberDto writer;
 
     public PostDto(final WriteRequestDto dto, final Member member) {
         this.title = dto.getTitle();
         this.content = dto.getContent();
         this.isPublic = dto.isPublic();
-        this.writer = member;
+        this.writer = new MemberDto(member);
     }
 
     public PostDto(final Post post) {
@@ -35,7 +36,7 @@ public class PostDto {
         this.isPublic = post.getIsPublic();
         this.createDate = post.getCreateDate();
         this.modifyDate = post.getModifyDate();
-        this.writer = post.getWriter();
+        this.writer = new MemberDto(post.getWriter());
     }
 
     public static Post toEntity(final PostDto dto) {
@@ -46,7 +47,7 @@ public class PostDto {
                 .isPublic(dto.isPublic())
                 .createDate(dto.getCreateDate())
                 .modifyDate(dto.getModifyDate())
-                .writer(dto.getWriter())
+                .writer(MemberDto.toEntity(dto.getWriter()))
                 .build();
     }
 }

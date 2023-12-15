@@ -1,5 +1,6 @@
 package com.ll.medium.domain.member.member.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ll.medium.domain.post.post.entity.Post;
 import com.ll.medium.global.entity.BaseEntity;
 import com.ll.medium.global.security.entity.JwtRefreshToken;
@@ -27,9 +28,11 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private MemberRole role;
 
+    @JsonIgnore
     @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
     private JwtRefreshToken refreshToken;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
     private List<Post> posts;
 }

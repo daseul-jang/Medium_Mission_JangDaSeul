@@ -37,10 +37,10 @@ export default function WriteForm() {
 
   return (
     <form
-      className='p-5 flex flex-col justify-between gap-5 h-screen'
+      className='w-full flex flex-col justify-around h-full gap-5 p-5'
       onSubmit={handleWriteSubmit}
     >
-      <div className='flex flex-col basis-1/12 bg-white justify-center h-full rounded-md mt-3'>
+      <div className='flex flex-col basis-1/12 bg-white justify-center rounded-md mt-3'>
         <textarea
           name='title'
           ref={textareaRef}
@@ -60,7 +60,7 @@ export default function WriteForm() {
           className='resize-none h-full text-xl focus:outline-none'
         />
       </div>
-      <div className='flex flex-col basis-2/12'>
+      <div className='flex flex-col basis-1/12 justify-center'>
         <button className='btn'>등록하기</button>
       </div>
     </form>

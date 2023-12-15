@@ -9,11 +9,14 @@ import AuthFrom from '../member/auth/AuthForm';
 import JoinAfter from '../member/auth/JoinAfter';
 import { signOut, useSession } from 'next-auth/react';
 import WriteIcon from './ui/icon/WriteIcon';
+import { useRouter } from 'next/navigation';
+import LoadingSpinnerDots from './ui/icon/LoadingSpinnerDots';
 
 export type AuthType = 'login' | 'join';
 
 export default function Navbar() {
-  const { data: session } = useSession();
+  const router = useRouter();
+  const { data: session, status } = useSession();
   const user = session?.user;
   const [openModal, setOpenModal] = useState(false);
   const [openForm, setOpenFrom] = useState(false);
@@ -43,7 +46,7 @@ export default function Navbar() {
   };
 
   return (
-    <div className='navbar bg-base-100 max-w-screen-xl mx-auto px-5'>
+    <div className='navbar max-w-screen-lg mx-auto bg-base-100 px-5'>
       <div className='flex-1 gap-4'>
         <h1 className='text-2xl font-bold font-custom'>Medium</h1>
         <div className='relative bg-zinc-100 rounded-full'>
@@ -58,9 +61,14 @@ export default function Navbar() {
         </div>
       </div>
       <div className='flex-none gap-3'>
-        {user ? (
+        {status === 'loading' ? (
+          <LoadingSpinnerDots />
+        ) : user ? (
           <>
-            <button className='text-sm flex items-center gap-1 mr-3'>
+            <button
+              className='text-sm flex items-center gap-1 mr-3'
+              onClick={() => router.push('/post/write')}
+            >
               <WriteIcon />
               Write
             </button>

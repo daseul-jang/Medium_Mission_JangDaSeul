@@ -1,5 +1,6 @@
 package com.ll.medium.domain.post.post.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ll.medium.domain.member.member.entity.Member;
 import com.ll.medium.global.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -23,6 +24,7 @@ public class Post extends BaseEntity {
 
     private boolean isPublic = true;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", nullable = false)
     private Member writer;
