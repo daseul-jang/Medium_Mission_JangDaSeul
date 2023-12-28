@@ -1,40 +1,83 @@
 'use client';
 
+import { useLatestList } from '@/hooks/post';
 import { Page, Response } from '@/model/common';
 import { Post } from '@/model/post';
+import { useState } from 'react';
 
 interface Props {
   responseData: Response<Page<Post>>;
 }
 
-export default function LatestList({ responseData }: Props) {
-  const { content } = responseData?.data;
-  console.log(responseData);
+export default function LatestList() {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const { data, isLoading, isError, error } = useLatestList();
+  const posts = data?.data?.content;
+
+  const handlePrevClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+
+    // 이전 버튼 클릭 핸들러
+    setCurrentIndex((prevIndex) =>
+      prevIndex > 0 ? prevIndex - 1 : Math.ceil(posts.length / 6) - 1
+    );
+  };
+
+  const handleNextClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+
+    // 다음 버튼 클릭 핸들러
+    setCurrentIndex((prevIndex) =>
+      prevIndex < Math.ceil(posts.length / 6) - 1 ? prevIndex + 1 : 0
+    );
+  };
+
+  const currentPosts = posts?.slice(currentIndex * 6, (currentIndex + 1) * 6);
+
+  if (!data || !currentPosts) {
+    return <>데이터가 없습니다.</>;
+  }
 
   return (
-    <ul className='w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 py-4 px-8'>
-      {content?.map((post, index) => (
-        <li
-          key={post.id}
-          className='card card-side bg-base-100 rounded-sm w-full p-3 shadow-md'
+    <div className='w-full relative'>
+      <div className='flex justify-between w-full'>
+        <button
+          onClick={handlePrevClick}
+          className='btn-circle bg-base-200/70 hover:bg-base-300/60 text-2xl text-gray-400 z-10 absolute left-0 top-1/2 transform -translate-y-1/2'
         >
-          <figure className='w-1/6'>
-            <span className='w-full flex font-bold text-3xl text-base-300'>
-              {index < 9 ? `0${index + 1}` : index + 1}
-            </span>
-          </figure>
-          <div className='card-body p-2 min-h-[100px]'>
-            <span className='card-actions justify-start text-xs'>
-              {post.writer.username}
-            </span>
-            <h3 className='card-title text-lg'>{post.title}</h3>
-            <span className='card-actions text-xs'>
-              {getDate(post.createDate)}
-            </span>
-          </div>
-        </li>
-      ))}
-    </ul>
+          ❮
+        </button>
+        <button
+          onClick={handleNextClick}
+          className='btn-circle bg-base-200/60 hover:bg-base-300/60 text-2xl text-gray-400 z-10 absolute right-0 top-1/2 transform -translate-y-1/2'
+        >
+          ❯
+        </button>
+      </div>
+      <ul className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 py-4 px-8'>
+        {currentPosts?.map((post: Post, index: number) => (
+          <li
+            key={post.id}
+            className='card card-side bg-base-100 rounded-sm w-full p-3 shadow-md'
+          >
+            <figure className='w-1/6'>
+              <span className='w-full flex font-bold text-3xl text-base-300'>
+                {(currentIndex * 6 + index + 1).toString().padStart(2, '0')}
+              </span>
+            </figure>
+            <div className='card-body p-2 min-h-[100px]'>
+              <span className='card-actions justify-start text-xs'>
+                {post.writer.username}
+              </span>
+              <h3 className='card-title text-lg'>{post.title}</h3>
+              <span className='card-actions text-xs'>
+                {getDate(post.createDate)}
+              </span>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 
@@ -58,3 +101,27 @@ export const getDate = (createDate: string) => {
 
   return `${year}-${month}-${day}`;
 };
+
+{
+  /* <ul className='w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 py-4 px-8'>
+  {content?.map((post, index) => (
+    <li
+      key={post.id}
+      className='card card-side bg-base-100 rounded-sm w-full p-3 shadow-md'
+    >
+      <figure className='w-1/6'>
+        <span className='w-full flex font-bold text-3xl text-base-300'>
+          {index < 9 ? `0${index + 1}` : index + 1}
+        </span>
+      </figure>
+      <div className='card-body p-2 min-h-[100px]'>
+        <span className='card-actions justify-start text-xs'>
+          {post.writer.username}
+        </span>
+        <h3 className='card-title text-lg'>{post.title}</h3>
+        <span className='card-actions text-xs'>{getDate(post.createDate)}</span>
+      </div>
+    </li>
+  ))}
+</ul>; */
+}

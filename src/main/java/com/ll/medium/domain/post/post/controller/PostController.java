@@ -38,10 +38,11 @@ public class PostController {
         List<PostDto> postDtos = postEntities.stream().map(PostDto::new).toList();
         Page<PostDto> postPageList = new PageImpl<>(postDtos, pageable, postEntities.getTotalElements());
 
-        return ResponseEntity.ok(new ResponseDto<>(
-                HttpStatus.OK.value(),
-                "나의 글 목록 조회 성공",
-                postPageList));
+        return ResponseEntity.ok(
+                new ResponseDto<>(
+                        HttpStatus.OK.value(),
+                        "나의 글 목록 조회 성공",
+                        postPageList));
     }
 
     /**
@@ -59,10 +60,11 @@ public class PostController {
                 postEntities.getTotalElements());
 
         log.info(pagePosts.getContent().getFirst().getWriter().getUsername());
-        return ResponseEntity.ok(new ResponseDto<>(
-                HttpStatus.OK.value(),
-                "최신 글 30개 조회 성공",
-                pagePosts));
+        return ResponseEntity.ok(
+                new ResponseDto<>(
+                        HttpStatus.OK.value(),
+                        "최신 글 30개 조회 성공",
+                        pagePosts));
     }
 
     /**
@@ -74,10 +76,31 @@ public class PostController {
         List<PostDto> postDtos = postEntities.stream().map(PostDto::new).toList();
         Page<PostDto> pagePosts = new PageImpl<>(postDtos, pageable, postEntities.getTotalElements());
 
-        return ResponseEntity.ok(new ResponseDto<>(
-                HttpStatus.OK.value(),
-                "전체 글 목록 조회 성공",
-                pagePosts));
+        return ResponseEntity.ok(
+                new ResponseDto<>(
+                        HttpStatus.OK.value(),
+                        "전체 글 목록 조회 성공",
+                        pagePosts));
+    }
+
+    @GetMapping("/infinite-list")
+    public ResponseEntity<?> infiniteList(@RequestParam(value = "cursorId", required = false) Long cursorId,
+                                          @RequestParam(value = "limit", defaultValue = "20") int limit) {
+        log.info("cursorId : {}", cursorId);
+        List<Post> postEntities = postService.findInfiniteList(cursorId, limit);
+        log.info(postEntities.toString());
+
+        if (postEntities.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        List<PostDto> postDtos = postEntities.stream().map(PostDto::new).toList();
+
+        return ResponseEntity.ok(
+                new ResponseDto<>(
+                        HttpStatus.OK.value(),
+                        "글 조회 성공",
+                        postDtos));
     }
 
     @PostMapping("/write")
@@ -89,9 +112,10 @@ public class PostController {
         log.info("write controller memberEntity: {}", memberEntity.getUsername());
         Post postEntity = postService.write(PostDto.toEntity(new PostDto(reqDto, memberEntity)));
 
-        return ResponseEntity.ok(new ResponseDto<>(
-                HttpStatus.CREATED.value(),
-                "글 작성 성공",
-                new PostDto(postEntity)));
+        return ResponseEntity.ok(
+                new ResponseDto<>(
+                        HttpStatus.CREATED.value(),
+                        "글 작성 성공",
+                        new PostDto(postEntity)));
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -38,13 +39,6 @@ public class PostService {
         Pageable pageable = PageRequest.of(0, 30, Sort.by(Sort.Direction.DESC, "createDate"));
         return postRepository.findByIsPublicTrueOrderByCreateDateDesc(pageable);
     }
-    /*public Page<Post> findLatestPosts() {
-        Pageable pageable = PageRequest.of(0, 30, Sort.by("createDate").descending());
-        return postRepository.findByIsPublicTrue(pageable);
-    }*/
-    /*public Page<Post> findLatestPosts(Pageable pageable) {
-        return postRepository.findByIsPublicTrueOrderByCreateDateDesc(pageable);
-    }*/
 
     /**
      * 페이지네이션이 적용된 리스트
@@ -59,6 +53,10 @@ public class PostService {
         return Optional.of(page)
                 .filter(Slice::hasContent)
                 .orElseThrow(() -> new DataNotFoundException("작성된 글이 없어요 🥲"));
+    }
+
+    public List<Post> findInfiniteList(Long cursorId, int limit) {
+        return postRepository.findPostsAfterCursor(cursorId, limit);
     }
 
     @Transactional

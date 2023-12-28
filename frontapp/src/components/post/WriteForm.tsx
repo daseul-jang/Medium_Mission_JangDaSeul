@@ -37,7 +37,7 @@ export default function WriteForm() {
 
   return (
     <form
-      className='w-full flex flex-col justify-around h-full gap-5 p-5'
+      className='h-full w-full flex flex-col justify-around gap-5 p-5'
       onSubmit={handleWriteSubmit}
     >
       <div className='flex flex-col basis-1/12 bg-white justify-center rounded-md mt-3'>

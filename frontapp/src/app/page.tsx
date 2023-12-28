@@ -1,16 +1,13 @@
+import InfiniteList from '@/components/home/InfiniteList';
 import LatestList from '@/components/home/LatestList';
 import Main from '@/components/home/Main';
-import { Post } from '@/model/post';
-import { getLatestList } from '@/service/posts';
-import Image from 'next/image';
 
 export default async function Home() {
-  const responseData = await getLatestList();
-
   return (
-    <section className='flex flex-col items-center w-full'>
+    <section className='flex flex-col items-center w-full h-full gap-10 -mt-[70px]'>
       <Main />
-      <LatestList responseData={responseData} />
+      <LatestList />
+      <InfiniteList />
     </section>
   );
 }

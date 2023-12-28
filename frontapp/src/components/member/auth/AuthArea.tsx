@@ -34,7 +34,7 @@ export default function AuthArea({
   return (
     <div className='flex flex-col items-center justify-center gap-10 h-full p-20'>
       <h1 className='text-3xl font-custom'>{data.title}</h1>
-      <div className=''>
+      <div>
         <div className='flex flex-col items-center gap-3 mt-[50px]'>
           {socialType.map((type, index) => (
             <SocialBtn type={type} authType={authType} key={index} />

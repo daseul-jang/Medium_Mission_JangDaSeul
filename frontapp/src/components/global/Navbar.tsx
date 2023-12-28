@@ -11,6 +11,7 @@ import { signOut, useSession } from 'next-auth/react';
 import WriteIcon from './ui/icon/WriteIcon';
 import { useRouter } from 'next/navigation';
 import LoadingSpinnerDots from './ui/icon/LoadingSpinnerDots';
+import Link from 'next/link';
 
 export type AuthType = 'login' | 'join';
 
@@ -46,9 +47,11 @@ export default function Navbar() {
   };
 
   return (
-    <div className='navbar max-w-screen-lg mx-auto bg-base-100 px-5'>
+    <div className='navbar lg:max-w-screen-lg lg:mx-auto'>
       <div className='flex-1 gap-4'>
-        <h1 className='text-2xl font-bold font-custom'>Medium</h1>
+        <Link href='/' className='text-3xl font-custom text-black'>
+          Medium
+        </Link>
         <div className='relative bg-zinc-100 rounded-full'>
           <div className='absolute flex items-center inset-y-0 left-0 pl-3 pointer-events-none'>
             <SearchIcon />
@@ -66,14 +69,20 @@ export default function Navbar() {
         ) : user ? (
           <>
             <button
-              className='text-sm flex items-center gap-1 mr-3'
+              className='text-black text-sm flex items-center gap-1 mr-3'
               onClick={() => router.push('/post/write')}
             >
               <WriteIcon />
               Write
             </button>
             <button
-              className='rounded-full bg-base-200 hover:bg-base-300 py-2 px-3 text-sm'
+              className='text-black text-sm flex items-center gap-1 mr-3'
+              onClick={() => router.push('/mypage')}
+            >
+              {user.username}
+            </button>
+            <button
+              className='rounded-full bg-red-900/70 text-white hover:bg-red-900 py-2 px-3 text-sm'
               onClick={() =>
                 signOut({
                   callbackUrl: '/',
@@ -94,7 +103,7 @@ export default function Navbar() {
             </button>
             <button
               name='login'
-              className='rounded-ful py-2 px-3 text-sm text-neutral-500 hover:text-neutral-800'
+              className='rounded-ful py-2 px-3 text-sm text-neutral-900 hover:text-black'
               onClick={changeAuthType}
             >
               Sign in
