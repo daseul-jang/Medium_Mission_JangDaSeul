@@ -1,6 +1,3 @@
-import { Member } from './member';
-import { Post } from './post';
-
 export interface Response<T> {
   result: boolean;
   status: number;
@@ -35,4 +32,17 @@ interface Sort {
   empty: boolean;
   sorted: boolean;
   unsorted: boolean;
+}
+
+export interface Cause {
+  address: string;
+  code: string;
+  errno: number;
+  port: number;
+  syscall: string;
+}
+
+export interface TokenError {
+  message: string;
+  code: number;
 }

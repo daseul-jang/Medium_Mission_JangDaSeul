@@ -12,22 +12,41 @@ import {
   IndexRange,
 } from 'react-virtualized';
 import InfiniteListItem from './InfiniteListItem';
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
+import Link from 'next/link';
 
 export default function InfiniteList() {
+  const { data, hasNextPage, isFetchingNextPage, fetchNextPage, status } =
+    useInfiniteList();
+  console.log(data);
+
   const cache = useRef(
     new CellMeasurerCache({
       fixedWidth: true,
       defaultHeight: 100,
     })
   );
-  const { data, hasNextPage, isFetchingNextPage, fetchNextPage, status } =
-    useInfiniteList();
+
+  // 화면 사이즈가 변경될 때마다 cache 초기화
+  // 리스트 아이템들의 크기를 반응형으로 만들 수 있음
+  useEffect(() => {
+    const handleResize = () => {
+      cache.current.clearAll();
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   const posts = useMemo(
     () => data?.pages.flatMap((page) => page) ?? [],
     [data]
   );
+
+  console.log(posts);
 
   const loadMoreRows = isFetchingNextPage
     ? () => new Promise((resolve, reject) => {})
@@ -41,6 +60,10 @@ export default function InfiniteList() {
     ({ index, key, parent, style }: ListRowProps) => {
       const post = posts[index];
 
+      if (post?.cause) {
+        return <>서버와 연결이 끊어짐</>;
+      }
+
       return (
         <CellMeasurer
           key={key}
@@ -49,9 +72,11 @@ export default function InfiniteList() {
           columnIndex={0}
           rowIndex={index}
         >
-          <div style={style}>
-            <InfiniteListItem post={post} />
-          </div>
+          {({ measure }) => (
+            <Link href={`/posts/${post?.id}`} style={style} onLoad={measure}>
+              <InfiniteListItem post={post} />
+            </Link>
+          )}
         </CellMeasurer>
       );
     },

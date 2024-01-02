@@ -39,12 +39,23 @@ public class NotProd implements ApplicationRunner {
 
                 Member resultMember = authService.join(testMember);
 
-                IntStream.rangeClosed(1, 10).forEach(j -> {
+                IntStream.rangeClosed(1, 25).forEach(j -> {
                     Post post = Post.builder()
                             .title("Title " + j)
                             .content("Content " + j)
                             .writer(resultMember)
                             .isPublic(true)
+                            .build();
+
+                    postService.write(post);
+                });
+
+                IntStream.rangeClosed(26, 50).forEach(j -> {
+                    Post post = Post.builder()
+                            .title("Title " + j)
+                            .content("Content " + j)
+                            .writer(resultMember)
+                            .isPublic(false)
                             .build();
 
                     postService.write(post);

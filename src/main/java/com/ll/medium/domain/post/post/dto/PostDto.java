@@ -1,5 +1,6 @@
 package com.ll.medium.domain.post.post.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ll.medium.domain.member.member.dto.MemberDto;
 import com.ll.medium.domain.member.member.entity.Member;
 import com.ll.medium.domain.post.post.entity.Post;
@@ -16,7 +17,9 @@ import java.time.LocalDateTime;
 public class PostDto {
     private Long id;
     private String title;
+    private String subtitle;
     private String content;
+    @JsonProperty("isPublic")
     private boolean isPublic;
     private LocalDateTime createDate;
     private LocalDateTime modifyDate;
@@ -24,6 +27,15 @@ public class PostDto {
 
     public PostDto(final WriteRequestDto dto, final Member member) {
         this.title = dto.getTitle();
+        this.subtitle = dto.getSubtitle();
+        this.content = dto.getContent();
+        this.isPublic = dto.isPublic();
+        this.writer = new MemberDto(member);
+    }
+
+    public PostDto(final ModifyRequestDto dto, final Member member) {
+        this.title = dto.getTitle();
+        this.subtitle = dto.getSubtitle();
         this.content = dto.getContent();
         this.isPublic = dto.isPublic();
         this.writer = new MemberDto(member);
@@ -32,6 +44,7 @@ public class PostDto {
     public PostDto(final Post post) {
         this.id = post.getId();
         this.title = post.getTitle();
+        this.subtitle = post.getSubtitle();
         this.content = post.getContent();
         this.isPublic = post.getIsPublic();
         this.createDate = post.getCreateDate();
@@ -43,6 +56,7 @@ public class PostDto {
         return Post.builder()
                 .id(dto.getId())
                 .title(dto.getTitle())
+                .subtitle(dto.getSubtitle())
                 .content(dto.getContent())
                 .isPublic(dto.isPublic())
                 .createDate(dto.getCreateDate())

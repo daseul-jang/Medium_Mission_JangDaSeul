@@ -4,6 +4,7 @@ import com.ll.medium.domain.member.exception.InvalidTokenException;
 import com.ll.medium.domain.member.exception.UserNotFoundException;
 import com.ll.medium.global.dto.ErrorResponseDto;
 import com.ll.medium.global.dto.ResponseDto;
+import com.ll.medium.global.security.jwt.JwtRefreshTokenNotFoundException;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -41,6 +42,16 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleInvalidTokenExceptions(InvalidTokenException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(commonException(HttpStatus.UNAUTHORIZED.value(), ex.getMessage(), ex.getClass().getName()));
+    }
+
+    /**
+     * 커스텀 예외 처리
+     * 리프레쉬 토큰이 DB에 존재하지 않을 때 예외 처리
+     */
+    @ExceptionHandler(JwtRefreshTokenNotFoundException.class)
+    public ResponseEntity<?> handleJwtRefreshTokenNotFoundExceptions(InvalidTokenException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(commonException(HttpStatus.NOT_FOUND.value(), ex.getMessage(), ex.getClass().getName()));
     }
 
     /**
@@ -154,6 +165,7 @@ public class GlobalExceptionHandler {
         return ResponseDto.<ErrorResponseDto>builder()
                 .result(false)
                 .status(error.getStatus())
+                .message(message)
                 .data(error)
                 .build();
     }

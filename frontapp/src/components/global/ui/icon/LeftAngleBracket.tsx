@@ -1,10 +1,15 @@
-export default function LeftAngleBracket() {
+import { AngleBracketProps } from './RightAngleBracket';
+
+export default function LeftAngleBracket({ classname }: AngleBracketProps) {
   return (
-    <svg className='w-7 h-7' viewBox='0 0 19 19'>
-      <path
-        d='M11.47 13.97L6.99 9.48 11.47 5l.55.5-3.99 3.98 4 4z'
-        fill='rgb(21 128 61 / var(--tw-text-opacity))'
-      ></path>
+    <svg
+      xmlns='http://www.w3.org/2000/svg'
+      /* height='16'
+      width='10' */
+      viewBox='0 0 320 512'
+      className='fill-current stroke-current'
+    >
+      <path d='M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z' />
     </svg>
   );
 }

@@ -4,9 +4,7 @@ export default function WriteIcon() {
       xmlns='http://www.w3.org/2000/svg'
       viewBox='0 0 64 64'
       strokeWidth='3'
-      stroke='#000'
-      fill='none'
-      className='w-6 h-6'
+      className='w-6 h-6 fill-none stroke-current'
     >
       <path d='M55.5,23.9V53.5a2,2,0,0,1-2,2h-43a2,2,0,0,1-2-2v-43a2,2,0,0,1,2-2H41.64' />
       <path d='M19.48,38.77l-.64,5.59a.84.84,0,0,0,.92.93l5.56-.64a.87.87,0,0,0,.5-.24L54.9,15.22a1.66,1.66,0,0,0,0-2.35L51.15,9.1a1.67,1.67,0,0,0-2.36,0L19.71,38.28A.83.83,0,0,0,19.48,38.77Z' />

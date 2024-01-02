@@ -8,16 +8,13 @@ import com.ll.medium.domain.member.member.entity.Member;
 import com.ll.medium.domain.member.member.service.AuthService;
 import com.ll.medium.domain.member.member.service.MemberService;
 import com.ll.medium.global.dto.ResponseDto;
-import com.ll.medium.global.security.jwt.JwtAuthResponseDto;
+import com.ll.medium.global.security.jwt.JwtAuthResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Log4j2
 @RestController
@@ -27,6 +24,19 @@ public class MemberController {
     private final AuthService authService;
     private final MemberService memberService;
 
+    @GetMapping("/member/{username}")
+    public ResponseEntity<?> findMember(@PathVariable("username") String username) {
+        Member memberEntity = memberService.getMember(username);
+
+        return ResponseEntity.ok(
+                new ResponseDto<>(
+                        HttpStatus.OK.value(),
+                        "회원 정보 조회 성공",
+                        new MemberDto(memberEntity)
+                )
+        );
+    }
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDto dto) {
         Member member = Member.builder()
@@ -34,7 +44,9 @@ public class MemberController {
                 .password(dto.getPassword())
                 .build();
 
-        JwtAuthResponseDto jwtDto = authService.authenticate(member);
+        JwtAuthResponse jwtDto = authService.authenticate(member);
+
+        log.info("jwt exp: {}", jwtDto.getAccessTokenExp());
 
         return ResponseEntity.ok(
                 new ResponseDto<>(HttpStatus.OK.value(), "로그인 성공", jwtDto));
@@ -42,6 +54,8 @@ public class MemberController {
 
     @PostMapping("/reissue-access-token")
     public ResponseEntity<?> reissueAccessToken(@RequestBody String refreshToken) {
+        log.info("refreshToken controller : ");
+        log.info(refreshToken);
         return ResponseEntity.ok(
                 new ResponseDto<>(
                         HttpStatus.OK.value(),

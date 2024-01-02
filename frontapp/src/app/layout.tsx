@@ -19,13 +19,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang='ko'>
-      <body className={`${inter.className} h-screen relative`}>
+      <body className={`${inter.className} h-screen`}>
         <AuthProvider>
           <ReactQueryProvider>
-            <header className='relative top-0 z-[999] bg-base-100/20 backdrop-blur-sm px-5'>
+            <header className='sticky top-0 z-40 bg-base-100/20 backdrop-blur-sm px-5'>
               <Navbar />
             </header>
-            <main className='relative flex flex-col items-center justify-between lg:max-w-screen-lg lg:mx-auto h-[calc(100vh-4rem)]'>
+            <main className='flex flex-col items-center justify-between lg:max-w-screen-xl lg:mx-auto h-[calc(100vh-4rem)]'>
               {children}
             </main>
             <div id='portal'></div>

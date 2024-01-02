@@ -4,7 +4,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-export default function ModalPotal({ children }: Props) {
+export default function ModalPortal({ children }: Props) {
   console.log('modal on');
   if (typeof window === 'undefined') return null;
 

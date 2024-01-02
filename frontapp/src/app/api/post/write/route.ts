@@ -7,6 +7,7 @@ import { addPost } from '@/service/posts';
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
   const user = session?.user;
+  const accessToken = session?.accessToken;
   console.log('글쓰기 세션유저 확인');
   console.log(user);
 
@@ -14,9 +15,9 @@ export async function POST(req: NextRequest) {
     return;
   }
 
-  const { title, content, isPublic }: WritePost = await req.json();
+  const { title, subtitle, content, isPublic }: WritePost = await req.json();
 
-  return addPost({ title, content, isPublic }, user.accessToken)
+  return addPost({ title, subtitle, content, isPublic }, accessToken!!)
     .then((res) => NextResponse.json(res))
     .catch((error) => new Response(JSON.stringify(error), { status: 500 }));
 }

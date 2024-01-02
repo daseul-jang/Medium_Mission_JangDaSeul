@@ -12,7 +12,11 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
 
     Page<Post> findByIsPublicTrueOrderByCreateDateDesc(Pageable pageable);
 
-    Page<Post> findByIsPublicTrueAndWriter_IdOrderById(Long id, Pageable pageable);
+    Page<Post> findByIsPublicTrueAndWriter_Id(Long id, Pageable pageable);
+
+    Page<Post> findByWriter_Id(Long id, Pageable pageable);
+
+    Page<Post> findByIsPublicFalseAndWriter_Id(Long memberId, Pageable sortedPageable);
 
     Post findTopByIdLessThanOrderByIdDesc(Long id);
 }

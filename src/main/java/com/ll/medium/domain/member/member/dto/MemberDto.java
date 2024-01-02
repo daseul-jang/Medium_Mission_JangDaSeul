@@ -1,5 +1,6 @@
 package com.ll.medium.domain.member.member.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ll.medium.domain.member.member.entity.Member;
 import com.ll.medium.domain.member.member.entity.MemberRole;
 import com.ll.medium.domain.post.post.entity.Post;

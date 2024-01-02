@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import SearchIcon from './ui/icon/SearchIcon';
-import ModalPotal from './modal/ModalPordal';
+import ModalPortal from './modal/ModalPortal';
 import Modal from './modal/Modal';
 import AuthArea from '../member/auth/AuthArea';
 import AuthFrom from '../member/auth/AuthForm';
@@ -12,6 +12,8 @@ import WriteIcon from './ui/icon/WriteIcon';
 import { useRouter } from 'next/navigation';
 import LoadingSpinnerDots from './ui/icon/LoadingSpinnerDots';
 import Link from 'next/link';
+import Dropdown from './ui/Dropdown';
+import WriteBtn from './ui/button/WriteBtn';
 
 export type AuthType = 'login' | 'join';
 
@@ -19,6 +21,8 @@ export default function Navbar() {
   const router = useRouter();
   const { data: session, status } = useSession();
   const user = session?.user;
+  console.log(session);
+
   const [openModal, setOpenModal] = useState(false);
   const [openForm, setOpenFrom] = useState(false);
   const [isAfterAuth, setIsAfterAuth] = useState(false);
@@ -52,9 +56,9 @@ export default function Navbar() {
         <Link href='/' className='text-3xl font-custom text-black'>
           Medium
         </Link>
-        <div className='relative bg-zinc-100 rounded-full'>
+        <div className='max-sm:hidden relative bg-zinc-100 rounded-full'>
           <div className='absolute flex items-center inset-y-0 left-0 pl-3 pointer-events-none'>
-            <SearchIcon />
+            <SearchIcon style='text-neutral-600' />
           </div>
           <input
             type='text'
@@ -64,33 +68,21 @@ export default function Navbar() {
         </div>
       </div>
       <div className='flex-none gap-3'>
+        <div className='md:hidden'>
+          <button className='rounded-full p-2 bg-transparent border-none hover:bg-white/25'>
+            <SearchIcon style='text-black' />
+          </button>
+        </div>
         {status === 'loading' ? (
           <LoadingSpinnerDots />
         ) : user ? (
           <>
-            <button
-              className='text-black text-sm flex items-center gap-1 mr-3'
-              onClick={() => router.push('/post/write')}
-            >
-              <WriteIcon />
-              Write
-            </button>
-            <button
-              className='text-black text-sm flex items-center gap-1 mr-3'
-              onClick={() => router.push('/mypage')}
-            >
-              {user.username}
-            </button>
-            <button
-              className='rounded-full bg-red-900/70 text-white hover:bg-red-900 py-2 px-3 text-sm'
-              onClick={() =>
-                signOut({
-                  callbackUrl: '/',
-                })
-              }
-            >
-              Sign out
-            </button>
+            <div className='hidden md:flex'>
+              <WriteBtn />
+            </div>
+            <div className='relative block w-8 h-8'>
+              <Dropdown user={user} />
+            </div>
           </>
         ) : (
           <>
@@ -103,7 +95,7 @@ export default function Navbar() {
             </button>
             <button
               name='login'
-              className='rounded-ful py-2 px-3 text-sm text-neutral-900 hover:text-black'
+              className='max-sm:hidden rounded-ful py-2 px-3 text-sm text-neutral-900 hover:text-black'
               onClick={changeAuthType}
             >
               Sign in
@@ -112,7 +104,7 @@ export default function Navbar() {
         )}
       </div>
       {openModal && (
-        <ModalPotal>
+        <ModalPortal>
           <Modal onClose={closeModalHandler}>
             {isAfterAuth ? (
               <JoinAfter changeAuthType={changeAuthType} />
@@ -131,7 +123,7 @@ export default function Navbar() {
               />
             )}
           </Modal>
-        </ModalPotal>
+        </ModalPortal>
       )}
     </div>
   );

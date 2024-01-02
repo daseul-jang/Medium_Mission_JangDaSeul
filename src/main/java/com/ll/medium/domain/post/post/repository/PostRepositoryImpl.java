@@ -16,35 +16,46 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     private final QPost post = QPost.post;
 
     @Override
-    public List<Post> findPostsAfterCursor(Long cursorId, int limit) {
-        /*if (cursorId == null) {
-            cursorId = Long.MAX_VALUE;
-        }
-
-        Long validLastPostId = queryFactory
-                .select(post.id.max())
-                .from(post)
-                .where(post.id.lt(cursorId))
-                .fetchOne();
-
-        if (validLastPostId != null) {
-            cursorId = validLastPostId;
-        }*/
-
+    public List<Post> findPostsAfterCursor(Long cursor, Integer limit) {
         return queryFactory
-                /*.selectFrom(post)
-                .where(post.id.lt(cursorId))
-                .orderBy(post.id.desc())
-                .limit(limit)
-                .fetch();*/
                 .selectFrom(post)
-                .where(ltCursorId(cursorId))
+                .where(ltCursorId(cursor), post.isPublic.isTrue())
                 .orderBy(post.id.desc())
                 .limit(limit)
                 .fetch();
     }
 
-    private BooleanExpression ltCursorId(Long cursorId) {
-        return cursorId == null ? null : post.id.lt(cursorId);
+    @Override
+    public List<Post> findMyAllPostsAfterCursor(Long memberId, Long cursor, Integer limit) {
+        return queryFactory
+                .selectFrom(post)
+                .where(post.writer.id.eq(memberId), ltCursorId(cursor))
+                .orderBy(post.id.desc())
+                .limit(limit)
+                .fetch();
+    }
+
+    @Override
+    public List<Post> findMyPublicPostsAfterCursor(Long memberId, Long cursor, Integer limit) {
+        return queryFactory
+                .selectFrom(post)
+                .where(post.writer.id.eq(memberId), ltCursorId(cursor), post.isPublic.isTrue())
+                .orderBy(post.id.desc())
+                .limit(limit)
+                .fetch();
+    }
+
+    @Override
+    public List<Post> findMyPrivatePostsAfterCursor(Long memberId, Long cursor, Integer limit) {
+        return queryFactory
+                .selectFrom(post)
+                .where(post.writer.id.eq(memberId), ltCursorId(cursor), post.isPublic.isFalse())
+                .orderBy(post.id.desc())
+                .limit(limit)
+                .fetch();
+    }
+
+    private BooleanExpression ltCursorId(Long cursor) {
+        return cursor == null ? null : post.id.lt(cursor);
     }
 }
