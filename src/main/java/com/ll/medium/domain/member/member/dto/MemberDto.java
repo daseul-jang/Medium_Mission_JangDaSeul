@@ -1,5 +1,6 @@
 package com.ll.medium.domain.member.member.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ll.medium.domain.member.member.entity.Member;
 import com.ll.medium.domain.member.member.entity.MemberRole;
 import com.ll.medium.domain.post.post.entity.Post;
@@ -33,7 +34,7 @@ public class MemberDto {
         this.posts = member.getPosts();
     }
 
-    public Member toEntity(final MemberDto dto) {
+    public static Member toEntity(final MemberDto dto) {
         return Member.builder()
                 .id(dto.getId())
                 .username(dto.getUsername())

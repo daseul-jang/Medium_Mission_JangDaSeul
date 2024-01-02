@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { AuthType } from '../../global/Navbar';
-import LeftAngleBracket from '../../global/ui/icon/LeftAngleBracket';
+import AuthLeftAngleBracket from '../../global/ui/icon/AuthLeftAngleBracket';
 import AuthInput from '../../global/ui/input/AuthInput';
 import { JoinInfo, LoginInfo } from '@/model/member';
 import { useJoin } from '@/hooks/member';
@@ -65,7 +65,10 @@ export default function AuthFrom({
 
       console.log(res);
 
-      if (!res?.ok) return;
+      if (!res?.ok) {
+        alert(res?.error);
+        return;
+      }
 
       closeModalHandler();
     }
@@ -106,7 +109,7 @@ export default function AuthFrom({
         className='cursor-pointer flex items-center text-sm text-green-700'
         onClick={closeFormHandler}
       >
-        <LeftAngleBracket />
+        <AuthLeftAngleBracket />
         All sign up options
       </span>
     </div>

@@ -11,7 +11,7 @@ import lombok.Data;
 public class WriteRequestDto {
     @NotBlank(message = "제목을 입력해 주세요.")
     private String title;
+    private String subtitle;
     private String content;
     private boolean isPublic;
-
 }

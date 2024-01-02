@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import CloseIcon from '../ui/icon/CloseIcon';
 
-type Props = {
+interface Props {
   onClose: () => void;
   children: React.ReactNode;
-};
+}
 
 export default function Modal({ onClose, children }: Props) {
   // 모달 창이 떠 있을 땐 백그라운드 스크롤을 막음

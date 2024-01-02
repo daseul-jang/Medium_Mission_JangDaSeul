@@ -5,7 +5,8 @@ import com.ll.medium.domain.member.member.entity.Member;
 import com.ll.medium.domain.member.member.entity.MemberRole;
 import com.ll.medium.domain.member.member.repository.MemberRepository;
 import com.ll.medium.global.security.entity.JwtRefreshToken;
-import com.ll.medium.global.security.jwt.JwtAuthResponseDto;
+import com.ll.medium.global.security.jwt.JwtAuthResponse;
+import com.ll.medium.global.security.jwt.JwtRefreshTokenNotFoundException;
 import com.ll.medium.global.security.jwt.JwtTokenProvider;
 import com.ll.medium.global.security.repository.JwtRefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Map;
+
 @Log4j2
 @Service
 @RequiredArgsConstructor
@@ -33,14 +36,16 @@ public class AuthService {
     private final JwtRefreshTokenRepository refreshTokenRepository;
 
     @Transactional
-    public JwtAuthResponseDto authenticate(final Member member) {
+    public JwtAuthResponse authenticate(final Member member) {
         Authentication authentication = authenticateUser(member);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
+        Map<String, Object> accessTokenMap = jwtTokenProvider.createAccessToken(authentication);
         JwtRefreshToken refreshToken = checkAndCreateRefreshToken(authentication);
 
-        return new JwtAuthResponseDto(
-                jwtTokenProvider.createAccessToken(authentication),
+        return new JwtAuthResponse(
+                (String) accessTokenMap.get("accessToken"),
+                ((Number) accessTokenMap.get("accessTokenExp")).longValue(),
                 refreshToken.getToken(),
                 refreshToken.getMember()
         );
@@ -57,9 +62,10 @@ public class AuthService {
     @Transactional
     protected JwtRefreshToken checkAndCreateRefreshToken(Authentication authentication) {
         Member authenticateUser = memberService.getMember(authentication.getName());
-        JwtRefreshToken refreshToken = refreshTokenRepository.findByMember(authenticateUser).orElse(null);
+        JwtRefreshToken refreshToken = refreshTokenRepository.findByMember_Id(authenticateUser.getId()).orElse(null);
 
-        if (refreshToken == null) {
+        if (refreshToken == null || !jwtTokenProvider.validateToken(refreshToken.getToken())) {
+            log.info("유효하지 않을 때");
             refreshToken = jwtTokenProvider.createRefreshToken(authentication);
             refreshToken = refreshToken.toBuilder().member(authenticateUser).build();
             refreshToken = refreshTokenRepository.save(refreshToken);
@@ -68,21 +74,29 @@ public class AuthService {
         return refreshToken;
     }
 
-    public JwtAuthResponseDto newAccessToken(String requestRefreshToken) {
+    public JwtAuthResponse newAccessToken(String requestRefreshToken) {
         if (!jwtTokenProvider.validateToken(requestRefreshToken)) {
             throw new InvalidTokenException("Refresh Token 검증 실패");
         }
 
         Authentication authentication = jwtTokenProvider.getAuthentication(requestRefreshToken);
         Member member = memberService.getMember(authentication.getName());
-        JwtRefreshToken refreshToken = refreshTokenRepository.findByMember(member).orElse(null);
+        JwtRefreshToken refreshToken = refreshTokenRepository.findByMember_Id(member.getId())
+                .orElseThrow(() -> new JwtRefreshTokenNotFoundException("리프레쉬 토큰을 찾을 수 없습니다."));
 
         assert refreshToken != null;
         if (!refreshToken.getToken().equals(requestRefreshToken)) {
             throw new InvalidTokenException("토큰이 일치하지 않습니다.");
         }
 
-        return new JwtAuthResponseDto(jwtTokenProvider.createAccessToken(authentication), refreshToken.getToken(), member);
+        Map<String, Object> accessTokenMap = jwtTokenProvider.createAccessToken(authentication);
+
+        return new JwtAuthResponse(
+                (String) accessTokenMap.get("accessToken"),
+                ((Number) accessTokenMap.get("accessTokenExp")).longValue(),
+                refreshToken.getToken(),
+                member
+        );
     }
 
     @Transactional

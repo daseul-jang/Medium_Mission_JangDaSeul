@@ -1,4 +1,4 @@
-export interface BaseMember {
+export interface Member {
   id: number;
   username: string;
   password: string;
@@ -9,20 +9,25 @@ export interface BaseMember {
   posts: [];
 }
 
-export interface LoginInfo extends Pick<BaseMember, 'username' | 'password'> {}
+export interface LoginInfo extends Pick<Member, 'username' | 'password'> {}
 export interface JoinInfo extends LoginInfo {
   passwordConfirm: string;
 }
 
 export interface AuthMember
   extends Pick<
-    BaseMember,
+    Member,
     'id' | 'username' | 'role' | 'createDate' | 'modifyDate'
   > {}
 
+export interface SessionMember extends AuthMember {
+  accessToken: string;
+  refreshToken: string;
+}
+
 export interface RefreshToken
-  extends Pick<BaseMember, 'id' | 'createDate' | 'modifyDate'> {
+  extends Pick<Member, 'id' | 'createDate' | 'modifyDate'> {
   token: string;
   expiryDate: string;
-  member: BaseMember;
+  member: Member;
 }

@@ -2,17 +2,18 @@ package com.ll.medium.domain.post.post.controller;
 
 import com.ll.medium.domain.member.member.entity.Member;
 import com.ll.medium.domain.member.member.service.MemberService;
+import com.ll.medium.domain.post.post.dto.ModifyRequestDto;
 import com.ll.medium.domain.post.post.dto.PostDto;
 import com.ll.medium.domain.post.post.dto.WriteRequestDto;
 import com.ll.medium.domain.post.post.entity.Post;
 import com.ll.medium.domain.post.post.service.PostService;
+import com.ll.medium.global.dto.PageDto;
 import com.ll.medium.global.dto.ResponseDto;
 import com.ll.medium.global.security.authentication.UserPrincipal;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Log4j2
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/post")
@@ -27,21 +29,175 @@ public class PostController {
     private final PostService postService;
     private final MemberService memberService;
 
-    /**
-     * 페이지네이션이 적용된 나의 글 목록
-     */
-    @GetMapping("/myList")
-    public ResponseEntity<?> myList(@AuthenticationPrincipal UserPrincipal userPrincipal,
-                                    Pageable pageable) {
+    @DeleteMapping("/{id}/delete")
+    public ResponseEntity<?> postDelete(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                        @PathVariable("id") Long id) {
+        log.info("post delete id: {}", id);
         Member memberEntity = memberService.getMember(userPrincipal.getUsername());
-        Page<Post> postEntities = postService.findMyList(memberEntity.getId(), pageable);
-        List<PostDto> postDtos = postEntities.stream().map(PostDto::new).toList();
-        Page<PostDto> postPageList = new PageImpl<>(postDtos, pageable, postEntities.getTotalElements());
+        Post postEntity = postService.findPost(id);
 
-        return ResponseEntity.ok(new ResponseDto<>(
-                HttpStatus.OK.value(),
-                "나의 글 목록 조회 성공",
-                postPageList));
+        postService.deletePost(postEntity, memberEntity.getUsername());
+
+        return ResponseEntity.ok(
+                new ResponseDto<>(
+                        HttpStatus.OK.value(),
+                        "성공적으로 삭제되었습니다.",
+                        null
+                )
+        );
+    }
+
+    @PutMapping("/{id}/modify")
+    public ResponseEntity<?> postModify(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                        @PathVariable("id") Long id,
+                                        @RequestBody ModifyRequestDto modifyDto) {
+        log.info(modifyDto.toString());
+        Post postEntity = postService.findPost(id);
+
+        postEntity = postEntity.toBuilder()
+                .title(modifyDto.getTitle())
+                .subtitle(modifyDto.getSubtitle())
+                .content(modifyDto.getContent())
+                .isPublic(modifyDto.isPublic())
+                .build();
+
+        postEntity = postService.modifyPost(postEntity, userPrincipal.getUsername());
+
+        return ResponseEntity.ok(
+                new ResponseDto<>(
+                        HttpStatus.OK.value(),
+                        "내 글 수정 성공",
+                        new PostDto(postEntity)
+                )
+        );
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> postDetail(@PathVariable("id") Long id) {
+        Post postEntity = postService.findPost(id);
+
+        return ResponseEntity.ok(
+                new ResponseDto<>(
+                        HttpStatus.OK.value(),
+                        "상세 글 조회 성공",
+                        new PostDto(postEntity)
+                )
+        );
+    }
+
+    @GetMapping("/b/{username}/mobile")
+    public ResponseEntity<?> userPublicPosts(@PathVariable("username") String username,
+                                             @RequestParam(value = "cursor", required = false) Long cursor,
+                                             @RequestParam(value = "limit", defaultValue = "5") Integer limit) {
+        Member memberEntity = memberService.getMember(username);
+        List<Post> myPostEntities = postService.findByMemberIdPublicPosts(memberEntity.getId(), cursor, limit);
+
+        return myPostsResponseEntity(myPostEntities, username + "의 공개 글 목록 조회 성공 (mobile)");
+    }
+
+    @GetMapping("/b/{username}/pc")
+    public ResponseEntity<?> userPublicPosts(@PathVariable("username") String username,
+                                             Pageable pageable) {
+        Member memberEntity = memberService.getMember(username);
+        Page<Post> postEntities = postService.findByMemberIdPublicPosts(memberEntity.getId(), pageable);
+
+        return myPostsResponseEntity(pageable, postEntities, username + "의 공개 글 목록 조회 성공 (pc)");
+    }
+
+    /**
+     * 커서 기반 페이지네이션(no-offset)이 적용된 나의 글 목록 (mobile)
+     * 각각 위에서부터 비공개/공개/전체
+     */
+    @GetMapping("/myList/private/mobile")
+    public ResponseEntity<?> myPrivatePosts(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                            @RequestParam(value = "cursor", required = false) Long cursor,
+                                            @RequestParam(value = "limit", defaultValue = "5") Integer limit) {
+        Member memberEntity = memberService.getMember(userPrincipal.getUsername());
+        List<Post> myPostEntities = postService.findByMemberIdPrivatePosts(memberEntity.getId(), cursor, limit);
+
+        return myPostsResponseEntity(myPostEntities, "나의 비공개 글 목록 조회 성공");
+    }
+
+    @GetMapping("/myList/public/mobile")
+    public ResponseEntity<?> myPublicPosts(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                           @RequestParam(value = "cursor", required = false) Long cursor,
+                                           @RequestParam(value = "limit", defaultValue = "5") Integer limit) {
+        Member memberEntity = memberService.getMember(userPrincipal.getUsername());
+        List<Post> myPostEntities = postService.findByMemberIdPublicPosts(memberEntity.getId(), cursor, limit);
+
+        return myPostsResponseEntity(myPostEntities, "나의 공개 글 목록 조회 성공");
+    }
+
+    @GetMapping("/myList/all/mobile")
+    public ResponseEntity<?> myAllPosts(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                        @RequestParam(value = "cursor", required = false) Long cursor,
+                                        @RequestParam(value = "limit", defaultValue = "5") Integer limit) {
+        log.info("myAllPosts");
+        log.info("cursor: {}", cursor);
+        Member memberEntity = memberService.getMember(userPrincipal.getUsername());
+        List<Post> myPostEntities = postService.findByMemberIdAllPosts(memberEntity.getId(), cursor, limit);
+
+        return myPostsResponseEntity(myPostEntities, "나의 전체 글 목록 조회 성공");
+    }
+
+    private ResponseEntity<?> myPostsResponseEntity(List<Post> myPostEntities, String message) {
+        if (myPostEntities.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        List<PostDto> myPostDtos = myPostEntities.stream().map(PostDto::new).toList();
+
+        return ResponseEntity.ok(
+                new ResponseDto<>(
+                        HttpStatus.OK.value(),
+                        message,
+                        myPostDtos
+                )
+        );
+    }
+
+    /**
+     * 페이지네이션(offset)이 적용된 나의 글 목록 (pc)
+     * 각각 위에서부터 비공개/공개/전체
+     */
+    @GetMapping("/myList/private/pc")
+    public ResponseEntity<?> myPrivatePosts(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                            Pageable pageable) {
+        Member memberEntity = memberService.getMember(userPrincipal.getUsername());
+        Page<Post> postEntities = postService.findByMemberIdPrivatePosts(memberEntity.getId(), pageable);
+
+        return myPostsResponseEntity(pageable, postEntities, "나의 비공개 글 목록 조회 성공");
+    }
+
+    @GetMapping("/myList/public/pc")
+    public ResponseEntity<?> myPublicPosts(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                           Pageable pageable) {
+        Member memberEntity = memberService.getMember(userPrincipal.getUsername());
+        Page<Post> postEntities = postService.findByMemberIdPublicPosts(memberEntity.getId(), pageable);
+
+        return myPostsResponseEntity(pageable, postEntities, "나의 공개 글 목록 조회 성공");
+    }
+
+    @GetMapping("/myList/all/pc")
+    public ResponseEntity<?> myAllPosts(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                        Pageable pageable) {
+        Member memberEntity = memberService.getMember(userPrincipal.getUsername());
+        Page<Post> postEntities = postService.findByMemberIdAllPosts(memberEntity.getId(), pageable);
+
+        return myPostsResponseEntity(pageable, postEntities, "나의 글 목록 조회 성공");
+    }
+
+    private ResponseEntity<?> myPostsResponseEntity(Pageable pageable, Page<Post> postEntities, String message) {
+        List<PostDto> postDtos = postEntities.stream().map(PostDto::new).toList();
+        Page<PostDto> postPages = new PageImpl<>(postDtos, pageable, postEntities.getTotalElements());
+
+        return ResponseEntity.ok(
+                new ResponseDto<>(
+                        HttpStatus.OK.value(),
+                        message,
+                        new PageDto<>(postPages)
+                )
+        );
     }
 
     /**
@@ -49,14 +205,27 @@ public class PostController {
      */
     @GetMapping("/latest-list")
     public ResponseEntity<?> latestList() {
-        return ResponseEntity.ok(new ResponseDto<>(
-                HttpStatus.OK.value(),
-                "최신 글 30개 조회 성공",
-                postService.findLatestPosts()));
+        Page<Post> postEntities = postService.findLatestPosts();
+        List<PostDto> postDtos = postEntities.stream().map(PostDto::new).toList();
+        log.info(postDtos.toString());
+
+        Page<PostDto> pagePosts = new PageImpl<>(
+                postDtos,
+                postEntities.getPageable(),
+                postEntities.getTotalElements());
+
+        log.info(pagePosts.getContent().getFirst().getWriter().getUsername());
+        return ResponseEntity.ok(
+                new ResponseDto<>(
+                        HttpStatus.OK.value(),
+                        "최신 글 30개 조회 성공",
+                        pagePosts
+                )
+        );
     }
 
     /**
-     * 페이지네이션을 적용한 전체 글 목록
+     * 페이지네이션(offset)을 적용한 전체 공개 글 목록
      */
     @GetMapping("/list")
     public ResponseEntity<?> list(Pageable pageable) {
@@ -64,21 +233,55 @@ public class PostController {
         List<PostDto> postDtos = postEntities.stream().map(PostDto::new).toList();
         Page<PostDto> pagePosts = new PageImpl<>(postDtos, pageable, postEntities.getTotalElements());
 
-        return ResponseEntity.ok(new ResponseDto<>(
-                HttpStatus.OK.value(),
-                "전체 글 목록 조회 성공",
-                pagePosts));
+        return ResponseEntity.ok(
+                new ResponseDto<>(
+                        HttpStatus.OK.value(),
+                        "전체 글 목록 조회 성공",
+                        pagePosts
+                )
+        );
+    }
+
+    /**
+     * 커서 기반 페이지네이션(no-offset) 전체 공개 글 목록 (무한 스크롤)
+     */
+    @GetMapping("/infinite-list")
+    public ResponseEntity<?> infiniteList(@RequestParam(value = "cursor", required = false) Long cursor,
+                                          @RequestParam(value = "limit", defaultValue = "20") Integer limit) {
+        log.info("cursor : {}", cursor);
+        List<Post> postEntities = postService.findInfiniteList(cursor, limit);
+        log.info(postEntities.toString());
+
+        if (postEntities.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        List<PostDto> postDtos = postEntities.stream().map(PostDto::new).toList();
+
+        return ResponseEntity.ok(
+                new ResponseDto<>(
+                        HttpStatus.OK.value(),
+                        "글 조회 성공",
+                        postDtos
+                )
+        );
     }
 
     @PostMapping("/write")
     public ResponseEntity<?> write(@AuthenticationPrincipal UserPrincipal userPrincipal,
                                    @Valid @RequestBody WriteRequestDto reqDto) {
+        log.info("write controller username: {}", userPrincipal.getUsername());
+        log.info("write controller reqDto: {}", reqDto.toString());
         Member memberEntity = memberService.getMember(userPrincipal.getUsername());
+        log.info("write controller memberEntity: {}", memberEntity.getUsername());
         Post postEntity = postService.write(PostDto.toEntity(new PostDto(reqDto, memberEntity)));
 
-        return ResponseEntity.ok(new ResponseDto<>(
-                HttpStatus.CREATED.value(),
-                "글 작성 성공",
-                new PostDto(postEntity)));
+        return ResponseEntity.ok(
+                new ResponseDto<>(
+                        HttpStatus.CREATED.value(),
+                        "글 작성 성공",
+                        new PostDto(postEntity)
+                )
+        );
     }
 }

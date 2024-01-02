@@ -28,10 +28,26 @@ body {
     rgb(var(--background-start-rgb));
 } */
 
+/* html,
+body {
+  width: 100%;
+  overflow-x: hidden;
+} */
+
 /* LocalIdIcon */
 .a {
   fill: none;
   stroke: #000000;
   stroke-linecap: round;
   stroke-linejoin: round;
+}
+
+.custom-menu li {
+  padding: 0.8rem;
+}
+
+@media (hover: hover) {
+  .custom-menu li {
+    color: #000000;
+  }
 }

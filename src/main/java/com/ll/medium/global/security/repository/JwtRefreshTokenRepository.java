@@ -8,4 +8,6 @@ import java.util.Optional;
 
 public interface JwtRefreshTokenRepository extends JpaRepository<JwtRefreshToken, Long> {
     Optional<JwtRefreshToken> findByMember(Member authenticateUser);
+
+    Optional<JwtRefreshToken> findByMember_Id(Long id);
 }
