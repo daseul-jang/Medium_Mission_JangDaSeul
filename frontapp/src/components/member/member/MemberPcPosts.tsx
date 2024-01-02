@@ -1,6 +1,7 @@
 import { useMemberPosts } from '@/hooks/post';
 import { useSearchParams } from 'next/navigation';
 import MemberPaginationList from '../MemberPaginationList';
+import LoadingSpinnerCircle from '@/components/global/ui/icon/LoadingSpinnerCircle';
 
 interface Props {
   viewer: string;
@@ -19,7 +20,7 @@ export default function MemberPcPosts({ viewer, username }: Props) {
   );
 
   if (isLoading) {
-    return <>Loading...</>;
+    return <LoadingSpinnerCircle />;
   }
 
   if (!data?.data) {

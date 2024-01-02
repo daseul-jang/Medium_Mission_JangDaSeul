@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { AuthMember, SessionMember } from '@/model/member';
+import { AuthMember } from '@/model/member';
 import { signOut } from 'next-auth/react';
 import { useState } from 'react';
 import Menu from './Menu';

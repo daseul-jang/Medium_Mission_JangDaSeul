@@ -5,11 +5,8 @@ interface Props {
 }
 
 export default function UserPage({ params: { username } }: Props) {
-  console.log('흠???');
-  console.log(username);
-
   return (
-    <section className='w-full h-full'>
+    <section className='w-full h-full px-5'>
       <MemberPosts username={username} />
     </section>
   );

@@ -7,6 +7,7 @@ import { AuthMember } from '@/model/member';
 import { useState } from 'react';
 import ModalPortal from '../global/modal/ModalPortal';
 import AlertModal from '../global/modal/AlertModal';
+import LoadingSpinnerCircle from '../global/ui/icon/LoadingSpinnerCircle';
 
 interface Props {
   id: string;
@@ -28,7 +29,7 @@ export default function PostDetail({ id, user }: Props) {
   };
 
   if (isLoading || Number(id) !== data.data.id) {
-    return <>Loading...</>;
+    return <LoadingSpinnerCircle />;
   }
 
   if (isDetailError) {

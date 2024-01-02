@@ -1,4 +1,4 @@
-import { BASE_URL, CUSTOM_HEADERS } from './setting';
+import { BASE_URL } from './setting';
 
 const POST_URL = BASE_URL + '/post';
 

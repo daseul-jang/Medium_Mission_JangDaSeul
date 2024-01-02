@@ -16,6 +16,7 @@ import {
   ListRowProps,
   WindowScroller,
 } from 'react-virtualized';
+import LoadingSpinnerCircle from '../global/ui/icon/LoadingSpinnerCircle';
 
 interface Props {
   children: (post: Post) => React.ReactNode;
@@ -104,7 +105,7 @@ export default function MemberInfiniteList({
     [posts, children]
   );
 
-  if (status === 'pending') return <p>Loading...</p>;
+  if (status === 'pending') return <LoadingSpinnerCircle />;
   if (status === 'error') return <p>Error :(</p>;
 
   return (

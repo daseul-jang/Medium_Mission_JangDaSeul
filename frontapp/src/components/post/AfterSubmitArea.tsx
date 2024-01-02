@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import ModalPortal from '../global/modal/ModalPortal';
 import FormModal from '../global/modal/FormModal';
 import IsPublicBtn from '../global/ui/button/IsPublicBtn';

@@ -1,10 +1,7 @@
-import Pagination from '@/components/global/ui/Pagination';
-import { getDate } from '@/components/home/LatestList';
 import { useMyPosts } from '@/hooks/myPost';
-import { Post } from '@/model/post';
-import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import MemberPaginationList from '../../MemberPaginationList';
+import LoadingSpinnerCircle from '@/components/global/ui/icon/LoadingSpinnerCircle';
 
 interface Props {
   type: string;
@@ -25,7 +22,7 @@ export default function MyPcPosts({ type, viewer }: Props) {
   console.log(data);
 
   if (isLoading) {
-    return <>Loading...</>;
+    return <LoadingSpinnerCircle />;
   }
 
   if (!data?.data) {

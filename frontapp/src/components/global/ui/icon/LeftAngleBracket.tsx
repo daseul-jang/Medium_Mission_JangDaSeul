@@ -4,8 +4,6 @@ export default function LeftAngleBracket({ classname }: AngleBracketProps) {
   return (
     <svg
       xmlns='http://www.w3.org/2000/svg'
-      /* height='16'
-      width='10' */
       viewBox='0 0 320 512'
       className='fill-current stroke-current'
     >

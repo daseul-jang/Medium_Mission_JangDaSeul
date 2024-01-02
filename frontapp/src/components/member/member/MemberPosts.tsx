@@ -1,9 +1,6 @@
 'use client';
 
-import { useMemberInfinitePosts, useMemberPosts } from '@/hooks/post';
 import { useWindowSize } from '@/hooks/useWindowSize';
-import MemberInfiniteList from '../MemberInfiniteList';
-import { UseInfiniteQueryResult } from '@tanstack/react-query';
 import MemberMobilePosts from './MemberMobilePosts';
 import MemberPcPosts from './MemberPcPosts';
 

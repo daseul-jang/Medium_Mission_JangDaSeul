@@ -3,7 +3,7 @@ import { getDate } from './LatestList';
 
 export default function InfiniteListItem({ post }: { post: Post }) {
   if (!post) {
-    return <>Loading...</>;
+    return <></>;
   }
 
   return (

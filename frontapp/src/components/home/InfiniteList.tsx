@@ -14,6 +14,7 @@ import {
 import InfiniteListItem from './InfiniteListItem';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import Link from 'next/link';
+import LoadingSpinnerDots from '../global/ui/icon/LoadingSpinnerDots';
 
 export default function InfiniteList() {
   const { data, hasNextPage, isFetchingNextPage, fetchNextPage, status } =
@@ -83,7 +84,7 @@ export default function InfiniteList() {
     [posts]
   );
 
-  if (status === 'pending') return <p>Loading...</p>;
+  if (status === 'pending') return <LoadingSpinnerDots />;
   if (status === 'error') return <p>Error :(</p>;
 
   return (

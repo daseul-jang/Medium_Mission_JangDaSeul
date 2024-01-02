@@ -13,7 +13,7 @@ export default function MyPosts({ type }: Props) {
   const viewer = width < 768 ? 'mobile' : 'pc';
 
   return (
-    <div>
+    <div className='h-full'>
       {viewer === 'mobile' ? (
         <MyMobilePosts type={type} viewer={viewer} />
       ) : (

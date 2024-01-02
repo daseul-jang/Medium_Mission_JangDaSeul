@@ -1,14 +1,9 @@
 'use client';
 
 import { useLatestList } from '@/hooks/post';
-import { Page, Response } from '@/model/common';
 import { Post } from '@/model/post';
 import Link from 'next/link';
 import { useState } from 'react';
-
-interface Props {
-  responseData: Response<Page<Post>>;
-}
 
 export default function LatestList() {
   const [currentIndex, setCurrentIndex] = useState(0);

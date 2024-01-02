@@ -2,7 +2,7 @@ import MyPostsTabs from '@/components/member/mypage/myposts/MyPostsTabs';
 
 export default function layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className='w-full flex flex-col px-3 md:px-0 py-5'>
+    <div className='w-full h-full flex flex-col px-3 md:px-0 py-5'>
       <div className='md:hidden max-w-xs mx-auto w-full pt-2 pb-6'>
         <MyPostsTabs />
       </div>

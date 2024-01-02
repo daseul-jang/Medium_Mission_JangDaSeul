@@ -15,12 +15,6 @@ interface Props {
 }
 
 export default function PostModifyForm({ user, post, id }: Props) {
-  /* const initialPost = {
-    title: post.title,
-    subtitle: post.subtitle,
-    content: post.content,
-    isPublic: post.isPublic,
-  }; */
   const { submitPostModify, isPending, isError } = usePostModify();
   const formProps = usePostForm({
     id,
