@@ -8,8 +8,10 @@ export default async function ModifyPage({ params: { id } }: Params) {
   const session = await getServerSession(authOptions);
   const user = session?.user;
   const oldPostData = await getPostData(id);
+  console.log('oldPost');
+  console.log(user);
 
-  if (user?.username !== oldPostData.writer?.username) {
+  if (user?.username !== oldPostData?.data.writer.username) {
     return <ErrorHandler status={403} />;
   }
 

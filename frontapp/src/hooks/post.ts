@@ -126,7 +126,7 @@ export const usePostModify = () => {
 
       alert('게시글이 성공적으로 수정되었습니다!');
 
-      router.replace(`/post/${res.data.id}`);
+      router.replace(`/posts/${res.data.id}`);
     },
     onError: (err) => {
       console.log('게시글 수정 실패');
