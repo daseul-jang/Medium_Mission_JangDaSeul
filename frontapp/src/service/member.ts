@@ -16,10 +16,12 @@ export const loginMember = async (member: LoginInfo) => {
 
     const data = await res.json();
 
+    console.log('try');
     console.log(data);
 
     return data;
   } catch (err) {
+    console.log('catch');
     console.log(err);
     return err;
   }

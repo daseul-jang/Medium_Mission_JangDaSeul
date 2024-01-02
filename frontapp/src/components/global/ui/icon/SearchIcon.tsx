@@ -1,4 +1,4 @@
-export default function SearchIcon() {
+export default function SearchIcon({ style }: { style: string }) {
   return (
     <svg
       xmlns='http://www.w3.org/2000/svg'
@@ -6,7 +6,7 @@ export default function SearchIcon() {
       viewBox='0 0 24 24'
       strokeWidth='1.5'
       stroke='currentColor'
-      className='w-5 h-5 text-neutral-600'
+      className={`w-5 h-5 ${style}`}
     >
       <path
         strokeLinecap='round'

@@ -8,8 +8,9 @@ import lombok.*;
 @Builder(toBuilder = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
 @AllArgsConstructor
-public class JwtAuthResponseDto {
+public class JwtAuthResponse {
     private final String accessToken;
+    private final Long accessTokenExp;
     private final String refreshToken;
     private final String tokenType = "Bearer";
     private Member member;
