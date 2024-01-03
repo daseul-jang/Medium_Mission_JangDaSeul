@@ -17,17 +17,27 @@ import java.util.List;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberDto {
     private Long id;
+
     private String username;
+
     private String password;
+
+    @JsonProperty("isPaid")
+    private boolean isPaid;
+
     private MemberRole role;
+
     private LocalDateTime createDate;
+    
     private LocalDateTime modifyDate;
+
     private List<Post> posts;
 
     public MemberDto(final Member member) {
         this.id = member.getId();
         this.username = member.getUsername();
         this.password = member.getPassword();
+        this.isPaid = member.isPaid();
         this.role = member.getRole();
         this.createDate = member.getCreateDate();
         this.modifyDate = member.getModifyDate();
@@ -39,6 +49,7 @@ public class MemberDto {
                 .id(dto.getId())
                 .username(dto.getUsername())
                 .password(dto.getPassword())
+                .isPaid(dto.isPaid())
                 .role(dto.getRole())
                 .createDate(dto.getCreateDate())
                 .modifyDate(dto.getModifyDate())

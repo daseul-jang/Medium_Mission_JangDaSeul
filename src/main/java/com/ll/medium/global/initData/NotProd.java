@@ -24,10 +24,6 @@ public class NotProd implements ApplicationRunner {
     private final PostService postService;
     private final MemberRepository memberRepository;
 
-    /*private final PostRepository postRepository;
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;*/
-
     @Override
     public void run(ApplicationArguments args) throws Exception {
         if (memberRepository.count() == 0) {
@@ -35,6 +31,7 @@ public class NotProd implements ApplicationRunner {
                 Member testMember = Member.builder()
                         .username("test" + i)
                         .password("test" + i)
+                        .isPaid(i % 2 == 0)
                         .build();
 
                 Member resultMember = authService.join(testMember);
@@ -45,6 +42,7 @@ public class NotProd implements ApplicationRunner {
                             .content("Content " + j)
                             .writer(resultMember)
                             .isPublic(true)
+                            .isPaid(i % 3 == 0)
                             .build();
 
                     postService.write(post);
@@ -56,6 +54,7 @@ public class NotProd implements ApplicationRunner {
                             .content("Content " + j)
                             .writer(resultMember)
                             .isPublic(false)
+                            .isPaid(i % 3 == 0)
                             .build();
 
                     postService.write(post);

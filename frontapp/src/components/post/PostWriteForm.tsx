@@ -6,7 +6,13 @@ import { usePostForm } from '@/hooks/usePostForm';
 import PostForm from './PostForm';
 
 export default function PostWriteForm() {
-  const initialPost = { title: '', subtitle: '', content: '', isPublic: true };
+  const initialPost = {
+    title: '',
+    subtitle: '',
+    content: '',
+    isPublic: true,
+    isPaid: false,
+  };
   const { submitPostWrite, isPending, isError } = usePostWrite();
   const formProps = usePostForm({
     type: 'write',

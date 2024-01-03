@@ -7,11 +7,14 @@ import ErrorHandler from '@/components/global/error/ErrorHandler';
 export default async function ModifyPage({ params: { id } }: Params) {
   const session = await getServerSession(authOptions);
   const user = session?.user;
-  const oldPostData = await getPostData(id);
-  console.log('oldPost');
+  console.log('user?');
   console.log(user);
 
-  if (user?.username !== oldPostData?.data.writer.username) {
+  const oldPostData = await getPostData(id, session?.accessToken);
+  console.log('oldPost');
+  console.log(oldPostData);
+
+  if (user?.username !== oldPostData?.data.writer?.username) {
     return <ErrorHandler status={403} />;
   }
 

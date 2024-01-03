@@ -1,6 +1,7 @@
 package com.ll.medium.domain.member.member.controller;
 
 import com.ll.medium.domain.member.exception.PasswordNotMatchException;
+import com.ll.medium.domain.member.exception.UserNotFoundException;
 import com.ll.medium.domain.member.member.dto.JoinRequestDto;
 import com.ll.medium.domain.member.member.dto.LoginRequestDto;
 import com.ll.medium.domain.member.member.dto.MemberDto;
@@ -27,6 +28,10 @@ public class MemberController {
     @GetMapping("/member/{username}")
     public ResponseEntity<?> findMember(@PathVariable("username") String username) {
         Member memberEntity = memberService.getMember(username);
+
+        if (memberEntity == null) {
+            throw new UserNotFoundException("회원을 찾을 수 없어요.");
+        }
 
         return ResponseEntity.ok(
                 new ResponseDto<>(

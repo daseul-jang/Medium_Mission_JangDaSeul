@@ -1,6 +1,7 @@
 package com.ll.medium.domain.member.member.service;
 
 import com.ll.medium.domain.member.exception.InvalidTokenException;
+import com.ll.medium.domain.member.exception.UserNotFoundException;
 import com.ll.medium.domain.member.member.entity.Member;
 import com.ll.medium.domain.member.member.entity.MemberRole;
 import com.ll.medium.domain.member.member.repository.MemberRepository;
@@ -16,6 +17,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,8 +39,17 @@ public class AuthService {
 
     @Transactional
     public JwtAuthResponse authenticate(final Member member) {
+        Member findMember = memberRepository.findByUsername(member.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username : " + member.getUsername()));
+
+        // 조회한 사용자 정보로 role 업데이트
+        updateRoleBasedOnPaymentStatus(findMember);
+
         Authentication authentication = authenticateUser(member);
         SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        log.info("getPrincipal?");
+        log.info(authentication.getPrincipal());
 
         Map<String, Object> accessTokenMap = jwtTokenProvider.createAccessToken(authentication);
         JwtRefreshToken refreshToken = checkAndCreateRefreshToken(authentication);
@@ -49,6 +60,16 @@ public class AuthService {
                 refreshToken.getToken(),
                 refreshToken.getMember()
         );
+    }
+
+    private void updateRoleBasedOnPaymentStatus(final Member member) {
+        MemberRole newRole = member.isPaid() ? MemberRole.PAID : MemberRole.USER;
+        if (!newRole.equals(member.getRole())) {
+            Member updateMember = member.toBuilder().role(newRole).build();
+
+            // DB에 변경된 role 필드값을 반영
+            memberRepository.save(updateMember);
+        }
     }
 
     private Authentication authenticateUser(final Member member) {
@@ -62,6 +83,11 @@ public class AuthService {
     @Transactional
     protected JwtRefreshToken checkAndCreateRefreshToken(Authentication authentication) {
         Member authenticateUser = memberService.getMember(authentication.getName());
+
+        if (authenticateUser == null) {
+            throw new UserNotFoundException("회원을 찾을 수 없어요.");
+        }
+
         JwtRefreshToken refreshToken = refreshTokenRepository.findByMember_Id(authenticateUser.getId()).orElse(null);
 
         if (refreshToken == null || !jwtTokenProvider.validateToken(refreshToken.getToken())) {
@@ -108,6 +134,7 @@ public class AuthService {
         Member encodingMember = Member.builder()
                 .username(member.getUsername())
                 .password(passwordEncoder.encode(member.getPassword()))
+                .isPaid(member.isPaid())
                 .role(MemberRole.USER)
                 .build();
 

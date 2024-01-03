@@ -51,6 +51,11 @@ export default function MemberPaginationList({
                       Private
                     </span>
                   ))}
+                {isAuth && post.isPaid && (
+                  <span className='px-2 py-1 text-xs rounded-full text-green-600 bg-green-200 '>
+                    멤버십
+                  </span>
+                )}
               </div>
             </Link>
             <span className='basis-2/12 text-center'>

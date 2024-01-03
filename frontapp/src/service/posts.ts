@@ -72,12 +72,13 @@ export const modifyPost = async (
   }
 };
 
-export const getPostDetail = async (id: string) => {
+export const getPostDetail = async (id: string, accessToken?: string) => {
   console.log('포스트 서비스 - 상세글');
   try {
     const res = await fetch(`${POST_URL}/${id}`, {
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
       },
       cache: 'no-store',
     });

@@ -9,10 +9,13 @@ interface Props {
   post: WritePost;
   modalOpen: boolean;
   isPublic: boolean;
+  isPaid: boolean;
   openModal: () => void;
   closeModal: () => void;
   publicHandler: () => void;
   privateHandler: () => void;
+  paidHandler: () => void;
+  noPaidHandler: () => void;
   handleOnChange: (
     e: React.ChangeEvent<HTMLInputElement & HTMLTextAreaElement>
   ) => void;
@@ -26,8 +29,11 @@ export default function AfterSubmitArea({
   openModal,
   closeModal,
   isPublic,
+  isPaid,
   publicHandler,
   privateHandler,
+  paidHandler,
+  noPaidHandler,
   handleOnChange,
   handleSubmit,
 }: Props) {
@@ -49,8 +55,6 @@ export default function AfterSubmitArea({
     }
   }, [post.subtitle]);
 
-  console.log(isPublic);
-
   return (
     <>
       <div className='flex flex-col basis-1/12 justify-center'>
@@ -63,7 +67,7 @@ export default function AfterSubmitArea({
           <FormModal onClose={closeModal}>
             <div className='flex justify-center items-center h-full'>
               <div className='container flex flex-col gap-8 px-10 lg:max-w-lg lg:px-0'>
-                <div className='flex flex-col w-full basis-2/5'>
+                <div className='flex flex-col w-full basis-4/12'>
                   <h1 className='text-lg font-bold mb-3'>Story Preview</h1>
                   <div className='lg:w-full h-52 bg-base-200 flex justify-center'>
                     <div className='h-full basis-4/6'></div>
@@ -87,7 +91,7 @@ export default function AfterSubmitArea({
                     />
                   </div>
                 </div>
-                <div className='flex flex-col w-full h-full basis-2/5'>
+                <div className='flex flex-col w-full h-full basis-3/12'>
                   <h1 className='text-lg font-bold mb-3'>공개 설정</h1>
                   <div className='container flex gap-4'>
                     <IsPublicBtn onClick={publicHandler} selected={isPublic}>
@@ -98,7 +102,18 @@ export default function AfterSubmitArea({
                     </IsPublicBtn>
                   </div>
                 </div>
-                <div className='flex items-end justify-end basis-1/5 w-full py-5'>
+                <div className='flex flex-col w-full h-full basis-3/12'>
+                  <h1 className='text-lg font-bold mb-3'>멤버십 설정</h1>
+                  <div className='container flex gap-4'>
+                    <IsPublicBtn onClick={noPaidHandler} selected={!isPaid}>
+                      전체 공개
+                    </IsPublicBtn>
+                    <IsPublicBtn onClick={paidHandler} selected={isPaid}>
+                      멤버십 공개
+                    </IsPublicBtn>
+                  </div>
+                </div>
+                <div className='flex items-end justify-end basis-2/12 w-full py-5'>
                   <button
                     className='btn min-w-[120px] max-sm:w-full'
                     onClick={handleSubmit}

@@ -138,12 +138,12 @@ export const usePostModify = () => {
 };
 
 export const usePostDetail = (id: string) => {
-  const { data, isLoading, isError, error } = useQuery({
+  const { data, isLoading, isFetching, isError, error } = useQuery({
     queryKey: ['post'],
     queryFn: () => fetchPostDetail(id),
   });
 
-  return { data, isLoading, isError, error };
+  return { data, isLoading, isFetching, isError, error };
 };
 
 export const useInfiniteList = () => {

@@ -29,7 +29,7 @@ export default function FormModal({ onClose, children }: Props) {
     >
       <div className='relative bg-white w-full h-full max-w-7xl'>
         <button className='absolute right-0 p-4' onClick={(e) => onClose(e)}>
-          <CloseIcon />
+          <CloseIcon className='w-4 h-4 text-gray-600 fill-current stroke-current' />
         </button>
         {children}
       </div>

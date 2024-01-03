@@ -15,9 +15,17 @@ interface Props {
 }
 
 export default function PostDetail({ id, user }: Props) {
-  const { data, isLoading, isError: isDetailError, error } = usePostDetail(id);
+  const {
+    data,
+    isLoading,
+    isFetching,
+    isError: isDetailError,
+    error,
+  } = usePostDetail(id);
   const [openAlert, setOpenAlert] = useState(false);
   const { submitDeletePost } = useDeletePost(id);
+
+  console.log(data);
 
   const closeAlert = () => {
     setOpenAlert(false);
@@ -28,8 +36,12 @@ export default function PostDetail({ id, user }: Props) {
     setOpenAlert(false);
   };
 
-  if (isLoading || Number(id) !== data.data.id) {
-    return <LoadingSpinnerCircle />;
+  if (isLoading || isFetching) {
+    return (
+      <div className='flex justify-center items-center h-full'>
+        <LoadingSpinnerCircle />
+      </div>
+    );
   }
 
   if (isDetailError) {
@@ -38,6 +50,10 @@ export default function PostDetail({ id, user }: Props) {
 
   if (!data) {
     return <>data not found</>;
+  }
+
+  if (!data.result) {
+    return <>{data.message}</>;
   }
 
   const post = data.data;
@@ -49,13 +65,13 @@ export default function PostDetail({ id, user }: Props) {
       </h1>
       <div className='flex justify-between w-full'>
         <div className='flex gap-2'>
-          <Link href={`/user/${post.writer.username}`}>
-            <span>{post.writer.username}</span>
+          <Link href={`/user/${post.writer?.username}`}>
+            <span>{post.writer?.username}</span>
           </Link>
           <span>·</span>
           <span>{getDate(post.createDate)}</span>
         </div>
-        {user?.username === post.writer.username && (
+        {user?.username === post.writer?.username && (
           <div className='flex gap-2'>
             <Link href={`/posts/${post.id}/modify`}>수정</Link>
             <button onClick={() => setOpenAlert(true)}>삭제</button>

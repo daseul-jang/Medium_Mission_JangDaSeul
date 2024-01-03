@@ -27,7 +27,7 @@ export default function Modal({ onClose, children }: Props) {
     >
       <div className='relative bg-white w-full h-full max-w-7xl sm:w-4/5 lg:h-4/5 lg:w-3/5 rounded-md shadow-xl border'>
         <button className='absolute right-0 p-4' onClick={() => onClose()}>
-          <CloseIcon />
+          <CloseIcon className='w-4 h-4 text-gray-600 fill-current stroke-current' />
         </button>
         {children}
       </div>

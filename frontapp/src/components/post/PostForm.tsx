@@ -5,10 +5,13 @@ interface PostFormProps {
   type: 'write' | 'modify';
   post: WritePost;
   isPublic: boolean;
+  isPaid: boolean;
   modalOpen: boolean;
   textareaRef: React.RefObject<HTMLTextAreaElement>;
   publicHandler: () => void;
   privateHandler: () => void;
+  paidHandler: () => void;
+  noPaidHandler: () => void;
   openModalHandler: () => void;
   closeModalHandler: () => void;
   handleOnChange: (
@@ -21,10 +24,13 @@ export default function PostForm({
   type,
   post,
   isPublic,
+  isPaid,
   modalOpen,
   textareaRef,
   publicHandler,
   privateHandler,
+  paidHandler,
+  noPaidHandler,
   openModalHandler,
   closeModalHandler,
   handleOnChange,
@@ -59,8 +65,11 @@ export default function PostForm({
         openModal={openModalHandler}
         closeModal={closeModalHandler}
         isPublic={isPublic}
+        isPaid={isPaid}
         publicHandler={publicHandler}
         privateHandler={privateHandler}
+        paidHandler={paidHandler}
+        noPaidHandler={noPaidHandler}
         handleOnChange={handleOnChange}
         handleSubmit={handleSubmit}
       />

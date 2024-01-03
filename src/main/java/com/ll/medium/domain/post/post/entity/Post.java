@@ -27,6 +27,8 @@ public class Post extends BaseEntity {
 
     private boolean isPublic = true;
 
+    private boolean isPaid = false;
+
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", nullable = false)
@@ -34,5 +36,9 @@ public class Post extends BaseEntity {
 
     public boolean getIsPublic() {
         return this.isPublic;
+    }
+
+    public boolean getIsPaid() {
+        return this.isPaid;
     }
 }

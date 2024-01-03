@@ -7,6 +7,7 @@ export interface Post {
   subtitle: string;
   content: string;
   isPublic: boolean;
+  isPaid: boolean;
   createDate: string;
   modifyDate: string;
   writer: Member;
@@ -14,4 +15,7 @@ export interface Post {
 }
 
 export interface WritePost
-  extends Pick<Post, 'title' | 'subtitle' | 'content' | 'isPublic'> {}
+  extends Pick<
+    Post,
+    'title' | 'subtitle' | 'content' | 'isPublic' | 'isPaid'
+  > {}

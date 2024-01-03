@@ -16,13 +16,23 @@ import java.time.LocalDateTime;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostDto {
     private Long id;
+
     private String title;
+
     private String subtitle;
+
     private String content;
+
     @JsonProperty("isPublic")
     private boolean isPublic;
+
+    @JsonProperty("isPaid")
+    private boolean isPaid;
+
     private LocalDateTime createDate;
+
     private LocalDateTime modifyDate;
+
     private MemberDto writer;
 
     public PostDto(final WriteRequestDto dto, final Member member) {
@@ -30,6 +40,7 @@ public class PostDto {
         this.subtitle = dto.getSubtitle();
         this.content = dto.getContent();
         this.isPublic = dto.isPublic();
+        this.isPaid = dto.isPaid();
         this.writer = new MemberDto(member);
     }
 
@@ -38,6 +49,7 @@ public class PostDto {
         this.subtitle = dto.getSubtitle();
         this.content = dto.getContent();
         this.isPublic = dto.isPublic();
+        this.isPaid = dto.isPaid();
         this.writer = new MemberDto(member);
     }
 
@@ -47,6 +59,7 @@ public class PostDto {
         this.subtitle = post.getSubtitle();
         this.content = post.getContent();
         this.isPublic = post.getIsPublic();
+        this.isPaid = post.getIsPaid();
         this.createDate = post.getCreateDate();
         this.modifyDate = post.getModifyDate();
         this.writer = new MemberDto(post.getWriter());
@@ -59,6 +72,7 @@ public class PostDto {
                 .subtitle(dto.getSubtitle())
                 .content(dto.getContent())
                 .isPublic(dto.isPublic())
+                .isPaid(dto.isPaid())
                 .createDate(dto.getCreateDate())
                 .modifyDate(dto.getModifyDate())
                 .writer(MemberDto.toEntity(dto.getWriter()))

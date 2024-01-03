@@ -14,6 +14,21 @@ public class PostExceptionHandler {
 
     /**
      * 커스텀 예외 처리
+     * 멤버십 회원이 아닐 때 예외 처리
+     */
+    @ExceptionHandler(NoAccessException.class)
+    public ResponseEntity<?> handleNoAccessExceptions(NoAccessException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(globalExceptionHandler.commonException(
+                                HttpStatus.FORBIDDEN.value(),
+                                ex.getMessage(),
+                                ex.getClass().getName()
+                        )
+                );
+    }
+
+    /**
+     * 커스텀 예외 처리
      * 게시글 데이터가 없을 시 예외 처리
      */
     @ExceptionHandler(DataNotFoundException.class)
