@@ -2,6 +2,7 @@ import { useMyPosts } from '@/hooks/myPost';
 import { useSearchParams } from 'next/navigation';
 import MemberPaginationList from '../../MemberPaginationList';
 import LoadingSpinnerCircle from '@/components/global/ui/icon/LoadingSpinnerCircle';
+import ErrorMessage from '@/components/global/error/ErrorMessage';
 
 interface Props {
   type: string;
@@ -25,14 +26,10 @@ export default function MyPcPosts({ type, viewer }: Props) {
     return <LoadingSpinnerCircle />;
   }
 
-  if (!data?.data) {
-    return <>Data Not Found</>;
-  }
-
   const posts = data?.data?.content;
 
-  if (!posts) {
-    return <>Data Not Found</>;
+  if (!data?.data || !posts) {
+    return <ErrorMessage message='데이터를 찾을 수 없어요.. 🥲' />;
   }
 
   return (

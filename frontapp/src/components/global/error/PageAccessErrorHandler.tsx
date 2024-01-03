@@ -20,7 +20,7 @@ const errorTypes: ErrorTypes = {
   },
 };
 
-export default function ErrorHandler({ status = 404 }) {
+export default function PageAccessErrorHandler({ status = 404 }) {
   const errorType = errorTypes[status];
 
   return (

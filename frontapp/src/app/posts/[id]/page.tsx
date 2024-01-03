@@ -18,7 +18,7 @@ export default async function PostDetailPage({ params: { id } }: Params) {
   const user = session?.user;
 
   return (
-    <section className='w-full h-full pt-16 px-10 max-w-screen-md -mt-[64px]'>
+    <section className='w-full h-full max-w-screen-md'>
       <PostDetail id={id} user={user} />
     </section>
   );

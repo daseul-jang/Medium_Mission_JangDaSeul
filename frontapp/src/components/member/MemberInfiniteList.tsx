@@ -17,6 +17,7 @@ import {
   WindowScroller,
 } from 'react-virtualized';
 import LoadingSpinnerCircle from '../global/ui/icon/LoadingSpinnerCircle';
+import ErrorMessage from '../global/error/ErrorMessage';
 
 interface Props {
   children: (post: Post) => React.ReactNode;
@@ -63,9 +64,6 @@ export default function MemberInfiniteList({
     [data]
   );
 
-  console.log('posts');
-  console.log(posts);
-
   const loadMoreRows = isFetchingNextPage
     ? () => new Promise((resolve, reject) => {})
     : ({ startIndex, stopIndex }: IndexRange) => fetchNextPage();
@@ -79,7 +77,7 @@ export default function MemberInfiniteList({
       const post = posts[index];
 
       if (post?.cause) {
-        return <>서버와 연결이 끊어짐</>;
+        return <ErrorMessage message='서버와 연결이 끊겼어요 😱' />;
       }
 
       if (!post) {

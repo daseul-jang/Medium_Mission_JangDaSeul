@@ -189,12 +189,12 @@ export const useAllList = (page: number, size: number) => {
 };
 
 export const useLatestList = () => {
-  const { data, isLoading, isError, error } = useQuery({
+  const { data, isLoading, isFetching, isError, error } = useQuery({
     queryKey: ['posts'],
     queryFn: getLatestList,
   });
 
-  return { data, isLoading, isError, error };
+  return { data, isLoading, isFetching, isError, error };
 };
 
 export const usePostWrite = () => {

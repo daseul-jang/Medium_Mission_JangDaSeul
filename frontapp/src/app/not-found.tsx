@@ -1,5 +1,5 @@
-import ErrorHandler from '@/components/global/error/ErrorHandler';
+import PageAccessErrorHandler from '@/components/global/error/PageAccessErrorHandler';
 
 export default function NotFound() {
-  return <ErrorHandler />;
+  return <PageAccessErrorHandler />;
 }
