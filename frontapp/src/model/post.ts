@@ -1,6 +1,5 @@
 import { Comment } from './comment';
 import { Cause } from './common';
-import { Member } from './member';
 
 export interface Post {
   id: number;

@@ -1,21 +1,13 @@
 'use client';
 
+import Link from 'next/link';
+import { useSession } from 'next-auth/react';
+import { useState } from 'react';
 import { useDeletePost, usePostDetail } from '@/hooks/post';
 import { getDate } from '../home/LatestList';
-import Link from 'next/link';
-import { AuthMember } from '@/model/member';
-import { useState } from 'react';
-import ModalPortal from '../global/modal/ModalPortal';
-import AlertModal from '../global/modal/AlertModal';
 import LoadingSpinnerCircle from '../global/ui/icon/LoadingSpinnerCircle';
 import ErrorMessage from '../global/error/ErrorMessage';
-import EllipsisIcon from '../global/ui/icon/EllipsisIcon';
-import EllipsisVerticalIcon from '../global/ui/icon/EllipsisVerticalIcon';
 import PostDetailDropdown from '../global/ui/PostDetailDropdown';
-import { Comment } from '@/model/comment';
-import CommentForm from './comment/CommentForm';
-import { useSession } from 'next-auth/react';
-import CommentArea from './comment/CommentArea';
 import ConfirmAlert from '../global/ui/ConfirmAlert';
 
 interface Props {

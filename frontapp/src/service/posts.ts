@@ -163,11 +163,7 @@ export const getAllList = async (page: number, size: number) => {
       cache: 'no-store',
     });
 
-    //console.log(res.status);
-
     const data = await res.json();
-
-    //console.log(data);
 
     return data;
   } catch (err) {
@@ -187,9 +183,6 @@ export const getLatestList = async () => {
     });
 
     const data = await res.json();
-
-    /* console.log(data);
-    console.log(data.data.content[0]); */
 
     return data;
   } catch (err) {
@@ -212,8 +205,6 @@ export const addPost = async (post: WritePost, accessToken: string) => {
     });
 
     const data = await res.json();
-
-    //console.log(data);
 
     return data;
   } catch (err) {

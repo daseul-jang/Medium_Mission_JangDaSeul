@@ -7,12 +7,8 @@ import PageAccessErrorHandler from '@/components/global/error/PageAccessErrorHan
 export default async function ModifyPage({ params: { id } }: Params) {
   const session = await getServerSession(authOptions);
   const user = session?.user;
-  console.log('user?');
-  console.log(user);
 
   const oldPostData = await getPostData(id, session?.accessToken);
-  console.log('oldPost');
-  console.log(oldPostData);
 
   if (user?.username !== oldPostData?.data.writerUsername) {
     return <PageAccessErrorHandler status={403} />;

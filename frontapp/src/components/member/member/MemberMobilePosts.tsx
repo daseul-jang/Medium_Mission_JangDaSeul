@@ -1,6 +1,5 @@
 import { useMemberInfinitePosts } from '@/hooks/post';
 import MemberInfiniteList from '../MemberInfiniteList';
-import { getDate } from '@/components/home/LatestList';
 import MemberMobilePostsItem from '../MemberMobilePostsItem';
 
 interface Props {
