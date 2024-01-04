@@ -28,6 +28,7 @@ interface Props {
   fetchNextPage: (
     options?: FetchNextPageOptions | undefined
   ) => Promise<InfiniteQueryObserverResult<InfiniteData<any, unknown>, Error>>;
+  isAuth: boolean;
 }
 
 export default function MemberInfiniteList({
@@ -37,6 +38,7 @@ export default function MemberInfiniteList({
   hasNextPage,
   isFetchingNextPage,
   fetchNextPage,
+  isAuth,
 }: Props) {
   const cache = useRef(
     new CellMeasurerCache({
@@ -93,14 +95,22 @@ export default function MemberInfiniteList({
           rowIndex={index}
         >
           {({ measure }) => (
-            <Link href={`/posts/${post?.id}`} style={style} onLoad={measure}>
+            <Link
+              href={
+                isAuth
+                  ? `/posts/${post.id}`
+                  : `/user/${post.writerUsername}/${post.id}`
+              }
+              style={style}
+              onLoad={measure}
+            >
               {children(post)}
             </Link>
           )}
         </CellMeasurer>
       );
     },
-    [posts, children]
+    [posts, children, isAuth]
   );
 
   if (status === 'pending') return <LoadingSpinnerCircle />;

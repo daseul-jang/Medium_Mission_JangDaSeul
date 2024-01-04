@@ -27,7 +27,7 @@ public class NotProd implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         if (memberRepository.count() == 0) {
-            IntStream.rangeClosed(1, 20).forEach(i -> {
+            IntStream.rangeClosed(1, 200).forEach(i -> {
                 Member testMember = Member.builder()
                         .username("test" + i)
                         .password("test" + i)
@@ -36,7 +36,7 @@ public class NotProd implements ApplicationRunner {
 
                 Member resultMember = authService.join(testMember);
 
-                IntStream.rangeClosed(1, 25).forEach(j -> {
+                IntStream.rangeClosed(1, 10).forEach(j -> {
                     Post post = Post.builder()
                             .title("Title " + j)
                             .content("Content " + j)
@@ -48,7 +48,7 @@ public class NotProd implements ApplicationRunner {
                     postService.write(post);
                 });
 
-                IntStream.rangeClosed(26, 50).forEach(j -> {
+                IntStream.rangeClosed(11, 20).forEach(j -> {
                     Post post = Post.builder()
                             .title("Title " + j)
                             .content("Content " + j)

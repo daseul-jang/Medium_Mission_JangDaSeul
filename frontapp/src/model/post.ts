@@ -1,3 +1,4 @@
+import { Comment } from './comment';
 import { Cause } from './common';
 import { Member } from './member';
 
@@ -10,7 +11,9 @@ export interface Post {
   isPaid: boolean;
   createDate: string;
   modifyDate: string;
-  writer: Member;
+  writerId: number;
+  writerUsername: string;
+  comments?: Comment[];
   cause?: Cause;
 }
 

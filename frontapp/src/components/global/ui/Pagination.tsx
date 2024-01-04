@@ -32,7 +32,7 @@ export default function Pagination({
       : Math.min(totalPages, currentPage + pagesToShow);
 
   return (
-    <div className='join h-[34px]'>
+    <div className='join h-auto mt-5'>
       <Link href={`${baseUrl}page=1&size=${pageSize}`}>
         <PageButton btnType='start' cond={currentPage === 1}>
           <div className='w-3 h-full flex justify-center items-center'>

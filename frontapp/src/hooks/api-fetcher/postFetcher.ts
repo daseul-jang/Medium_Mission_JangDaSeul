@@ -73,8 +73,9 @@ export const fetchModify = async (post: WritePost, id?: string) => {
   return res.data;
 };
 
-export const fetchPostDetail = async (id: string) => {
-  const res = await axios.get(`/post/${id}`);
+export const fetchPostDetail = async (id: string, username?: string) => {
+  const url = username ? `/user/${username}/${id}` : `/post/${id}`;
+  const res = await axios.get(url);
 
   return res.data;
 };
@@ -85,7 +86,7 @@ export const fetchInfiniteList = async ({
   pageParam: number | null;
 }): Promise<Post[]> => {
   const res = await axios.get('/post/infinite-list', {
-    params: { cursor: pageParam, limit: 20 },
+    params: { cursor: pageParam, limit: 5 },
   });
 
   return res.data;

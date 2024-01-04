@@ -22,7 +22,7 @@ export default function MemberPaginationList({
   baseUrl,
 }: Props) {
   return (
-    <div className='w-full h-full flex flex-col items-center justify-between pb-5'>
+    <div className='w-full h-full flex flex-col items-center pb-5'>
       <ul className='w-full'>
         <div className='w-full min-h-[50px] flex justify-around items-center border-b px-2 py-3'>
           <span className='basis-2/12 text-center border-r border-gray-300'>
@@ -39,7 +39,14 @@ export default function MemberPaginationList({
             className='w-full flex min-h-[50px] justify-between items-center border-b px-2'
           >
             <span className='basis-2/12 text-center'>{post.id}</span>
-            <Link href={`/posts/${post.id}`} className='basis-8/12'>
+            <Link
+              href={
+                isAuth
+                  ? `/posts/${post.id}`
+                  : `/user/${post.writerUsername}/${post.id}?page=${page}&size=${size}`
+              }
+              className='basis-8/12'
+            >
               <div className='w-full flex gap-3 items-center px-4'>
                 <span className='font-semibold'>{post.title}</span>
                 {post.isPaid && (

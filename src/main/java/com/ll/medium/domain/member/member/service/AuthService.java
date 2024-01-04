@@ -2,6 +2,7 @@ package com.ll.medium.domain.member.member.service;
 
 import com.ll.medium.domain.member.exception.InvalidTokenException;
 import com.ll.medium.domain.member.exception.UserNotFoundException;
+import com.ll.medium.domain.member.member.dto.MemberDto;
 import com.ll.medium.domain.member.member.entity.Member;
 import com.ll.medium.domain.member.member.entity.MemberRole;
 import com.ll.medium.domain.member.member.repository.MemberRepository;
@@ -58,7 +59,7 @@ public class AuthService {
                 (String) accessTokenMap.get("accessToken"),
                 ((Number) accessTokenMap.get("accessTokenExp")).longValue(),
                 refreshToken.getToken(),
-                refreshToken.getMember()
+                new MemberDto(refreshToken.getMember())
         );
     }
 
@@ -121,7 +122,7 @@ public class AuthService {
                 (String) accessTokenMap.get("accessToken"),
                 ((Number) accessTokenMap.get("accessTokenExp")).longValue(),
                 refreshToken.getToken(),
-                member
+                new MemberDto(member)
         );
     }
 

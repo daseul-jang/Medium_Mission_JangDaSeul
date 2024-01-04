@@ -41,7 +41,11 @@ export default function LatestList() {
   );
 
   if (isLoading || isFetching) {
-    return <LoadingSpinnerCircle />;
+    return (
+      <div className='h-[200px] flex justify-center items-center'>
+        <span className='loading loading-spinner loading-lg text-success'></span>
+      </div>
+    );
   }
 
   if (!data || !currentPosts) {
@@ -77,7 +81,7 @@ export default function LatestList() {
               </figure>
               <div className='card-body p-2 basis-5/6'>
                 <span className='card-actions justify-start text-xs'>
-                  {post.writer.username}
+                  {post.writerUsername}
                 </span>
                 <h3 className='card-title text-lg h-full max-h-14 overflow-ellipsis overflow-hidden line-clamp-2'>
                   {post.title}

@@ -33,15 +33,13 @@ export default function MyPcPosts({ type, viewer }: Props) {
   }
 
   return (
-    <div>
-      <MemberPaginationList
-        posts={posts}
-        isAuth={true}
-        totalPages={data.data.totalPages || 0}
-        page={page}
-        size={size}
-        baseUrl={`/user/my/myposts${type === 'all' ? '' : `/${type}`}?`}
-      />
-    </div>
+    <MemberPaginationList
+      posts={posts}
+      isAuth={true}
+      totalPages={data.data.totalPages || 0}
+      page={page}
+      size={size}
+      baseUrl={`/user/my/myposts${type === 'all' ? '' : `/${type}`}?`}
+    />
   );
 }

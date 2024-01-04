@@ -26,6 +26,7 @@ export default function MemberMobilePosts({ viewer, username }: Props) {
       hasNextPage={hasNextPage}
       isFetchingNextPage={isFetchingNextPage}
       fetchNextPage={fetchNextPage}
+      isAuth={false}
     >
       {(post) => <MemberMobilePostsItem post={post} isAuth={false} />}
     </MemberInfiniteList>

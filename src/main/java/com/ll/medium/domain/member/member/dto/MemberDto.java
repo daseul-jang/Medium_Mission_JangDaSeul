@@ -3,6 +3,7 @@ package com.ll.medium.domain.member.member.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ll.medium.domain.member.member.entity.Member;
 import com.ll.medium.domain.member.member.entity.MemberRole;
+import com.ll.medium.domain.post.post.dto.PostDto;
 import com.ll.medium.domain.post.post.entity.Post;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -28,10 +29,10 @@ public class MemberDto {
     private MemberRole role;
 
     private LocalDateTime createDate;
-    
+
     private LocalDateTime modifyDate;
 
-    private List<Post> posts;
+    private List<Long> postIds;
 
     public MemberDto(final Member member) {
         this.id = member.getId();
@@ -41,7 +42,7 @@ public class MemberDto {
         this.role = member.getRole();
         this.createDate = member.getCreateDate();
         this.modifyDate = member.getModifyDate();
-        this.posts = member.getPosts();
+        this.postIds = member.getPosts().stream().map(Post::getId).toList();
     }
 
     public static Member toEntity(final MemberDto dto) {
@@ -53,7 +54,6 @@ public class MemberDto {
                 .role(dto.getRole())
                 .createDate(dto.getCreateDate())
                 .modifyDate(dto.getModifyDate())
-                .posts(dto.getPosts())
                 .build();
     }
 }

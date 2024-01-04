@@ -137,10 +137,10 @@ export const usePostModify = () => {
   return { submitPostModify, isPending, isError };
 };
 
-export const usePostDetail = (id: string) => {
+export const usePostDetail = (id: string, username?: string) => {
   const { data, isLoading, isFetching, isError, error } = useQuery({
     queryKey: ['post'],
-    queryFn: () => fetchPostDetail(id),
+    queryFn: () => fetchPostDetail(id, username),
   });
 
   return { data, isLoading, isFetching, isError, error };

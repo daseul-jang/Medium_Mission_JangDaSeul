@@ -24,8 +24,33 @@ export const deletePost = async (id: string, accessToken: string) => {
   }
 };
 
-export const getMemberPosts = async (url: string) => {
+export const getMemberPost = async (
+  username: string,
+  id: string,
+  accessToken: string
+) => {
   console.log('포스트 서비스 - 회원 게시글 조회');
+
+  try {
+    const res = await fetch(`${POST_URL}/b/${username}/${id}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    const data = await res.json();
+    console.log(data);
+
+    return data;
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
+};
+
+export const getMemberPosts = async (url: string) => {
+  console.log('포스트 서비스 - 회원 게시글 목록 조회');
 
   try {
     const res = await fetch(`${POST_URL}/b/${url}`, {

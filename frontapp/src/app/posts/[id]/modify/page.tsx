@@ -14,13 +14,13 @@ export default async function ModifyPage({ params: { id } }: Params) {
   console.log('oldPost');
   console.log(oldPostData);
 
-  if (user?.username !== oldPostData?.data.writer?.username) {
+  if (user?.username !== oldPostData?.data.writerUsername) {
     return <PageAccessErrorHandler status={403} />;
   }
 
   return (
-    <section className='w-full h-full max-w-screen-sm mx-auto'>
-      <PostModifyForm user={user} post={oldPostData?.data} id={id} />
+    <section className='w-full h-full max-w-screen-sm mx-auto pt-[64px]'>
+      <PostModifyForm post={oldPostData?.data} id={id} />
     </section>
   );
 }

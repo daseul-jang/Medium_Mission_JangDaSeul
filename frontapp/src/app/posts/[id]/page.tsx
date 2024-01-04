@@ -1,7 +1,6 @@
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import PostDetail from '@/components/post/PostDetail';
+import CommentArea from '@/components/post/comment/CommentArea';
 import { getPostDetail } from '@/service/posts';
-import { getServerSession } from 'next-auth';
 import { cache } from 'react';
 
 export interface Params {
@@ -14,12 +13,14 @@ export const getPostData = cache(
 );
 
 export default async function PostDetailPage({ params: { id } }: Params) {
-  const session = await getServerSession(authOptions);
-  const user = session?.user;
-
   return (
-    <section className='w-full h-full max-w-screen-md'>
-      <PostDetail id={id} user={user} />
+    <section className='w-full h-full max-w-screen-md px-7 sm:px-10 flex flex-col pt-[64px]'>
+      <div className='h-full md:mt-5 min-h-[300px] md:min-h-[400px]'>
+        <PostDetail id={id} />
+      </div>
+      <div className='h-full py-3'>
+        <CommentArea postId={id} />
+      </div>
     </section>
   );
 }

@@ -4,6 +4,9 @@ import { Inter } from 'next/font/google';
 import Navbar from '@/components/global/Navbar';
 import ReactQueryProvider from '@/context/ReactQueryProvider';
 import AuthProvider from '@/context/AuthProvider';
+import '@fortawesome/fontawesome-svg-core/styles.css';
+import { config } from '@fortawesome/fontawesome-svg-core';
+config.autoAddCss = false;
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -22,10 +25,10 @@ export default function RootLayout({
       <body className={`${inter.className} h-screen`}>
         <AuthProvider>
           <ReactQueryProvider>
-            <header className='sticky top-0 z-40 bg-base-100/20 backdrop-blur-sm px-5'>
+            <header className='sticky top-0 z-40 bg-base-100/30 backdrop-blur-sm px-5'>
               <Navbar />
             </header>
-            <main className='flex flex-col items-center justify-between lg:max-w-screen-xl lg:mx-auto h-[calc(100vh-4rem)]'>
+            <main className='flex flex-col items-center justify-between lg:max-w-screen-xl lg:mx-auto h-full -mt-[64px]'>
               {children}
             </main>
             <div id='portal'></div>

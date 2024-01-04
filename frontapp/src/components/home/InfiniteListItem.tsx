@@ -3,15 +3,11 @@ import { getDate } from './LatestList';
 import Badge from '../global/ui/Badge';
 
 export default function InfiniteListItem({ post }: { post: Post }) {
-  if (!post) {
-    return <></>;
-  }
-
   return (
     <div className='flex flex-col justify-start pt-5 border-b h-[175px] sm:h-[270px] w-full py-5'>
       <div className='flex gap-2 items-center h-fit'>
         <span className='overflow-hidden text-ellipsis whitespace-nowrap'>
-          {post.writer?.username}
+          {post.writerUsername}
         </span>
         <span>·</span>
         <span>{getDate(post.createDate)}</span>

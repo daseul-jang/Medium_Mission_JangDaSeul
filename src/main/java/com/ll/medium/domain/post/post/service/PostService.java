@@ -43,7 +43,17 @@ public class PostService {
     }
 
     public Post findPost(final Long id, final Member member) {
-        Post post = findPost(id);
+        Post post = getPost(id);
+
+        if (isPaidPostAccessible(post, member)) {
+            throw new NoAccessException("이 글은 멤버십 회원만 볼 수 있어요 😉");
+        }
+
+        return post;
+    }
+
+    public Post findPost(final String username, final Long id, final Member member) {
+        Post post = getUserPost(username, id);
 
         if (isPaidPostAccessible(post, member)) {
             throw new NoAccessException("이 글은 멤버십 회원만 볼 수 있어요 😉");
@@ -67,7 +77,13 @@ public class PostService {
         return !post.getWriter().getId().equals(member.getId());
     }
 
-    public Post findPost(Long id) {
+    //findUserPostDetail
+    public Post getUserPost(String username, Long id) {
+        return postRepository.findByWriter_UsernameAndId(username, id).orElseThrow(() -> new DataNotFoundException("해당 글을 찾을 수 없어요 😥"));
+    }
+
+    //findPostDetail
+    public Post getPost(Long id) {
         return postRepository.findById(id).orElseThrow(() -> new DataNotFoundException("해당 글을 찾을 수 없어요 😥"));
     }
 

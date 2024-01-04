@@ -47,6 +47,8 @@ export default function InfiniteList() {
     [data]
   );
 
+  console.log(posts);
+
   const loadMoreRows = isFetchingNextPage
     ? () => new Promise((resolve, reject) => {})
     : ({ startIndex, stopIndex }: IndexRange) => fetchNextPage();
@@ -61,6 +63,10 @@ export default function InfiniteList() {
 
       if (post?.cause) {
         return <ErrorMessage message='서버와 연결이 끊겼어요 😱' />;
+      }
+
+      if (!post) {
+        return <></>;
       }
 
       return (
@@ -110,7 +116,7 @@ export default function InfiniteList() {
                     rowHeight={cache.current.rowHeight}
                     rowRenderer={rowRenderer}
                     deferredMeasurementCache={cache.current}
-                    overscanRowCount={5}
+                    overscanRowCount={1}
                   />
                 )}
               </AutoSizer>

@@ -6,14 +6,14 @@ export const useWindowSize = () => {
     height: 0,
   });
 
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowSize({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
-    };
+  const handleResize = () => {
+    setWindowSize({
+      width: window.innerWidth,
+      height: window.innerHeight,
+    });
+  };
 
+  useEffect(() => {
     window.addEventListener('resize', handleResize);
     handleResize();
 

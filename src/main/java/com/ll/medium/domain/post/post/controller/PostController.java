@@ -1,8 +1,11 @@
 package com.ll.medium.domain.post.post.controller;
 
 import com.ll.medium.domain.member.exception.UserNotFoundException;
+import com.ll.medium.domain.member.member.dto.MemberDto;
 import com.ll.medium.domain.member.member.entity.Member;
 import com.ll.medium.domain.member.member.service.MemberService;
+import com.ll.medium.domain.post.comment.entity.Comment;
+import com.ll.medium.domain.post.comment.service.CommentService;
 import com.ll.medium.domain.post.exception.NoAccessException;
 import com.ll.medium.domain.post.post.dto.ModifyRequestDto;
 import com.ll.medium.domain.post.post.dto.PostDto;
@@ -32,6 +35,7 @@ import java.util.Optional;
 public class PostController {
     private final PostService postService;
     private final MemberService memberService;
+    private final CommentService commentService;
 
     @DeleteMapping("/{id}/delete")
     public ResponseEntity<?> postDelete(@AuthenticationPrincipal UserPrincipal userPrincipal,
@@ -42,7 +46,7 @@ public class PostController {
             throw new UserNotFoundException("회원을 찾을 수 없어요.");
         }
 
-        Post postEntity = postService.findPost(id);
+        Post postEntity = postService.getPost(id);
         postService.deletePost(postEntity, memberEntity.getUsername());
 
         return ResponseEntity.ok(
@@ -58,13 +62,14 @@ public class PostController {
     public ResponseEntity<?> postModify(@AuthenticationPrincipal UserPrincipal userPrincipal,
                                         @PathVariable("id") Long id,
                                         @RequestBody ModifyRequestDto modifyDto) {
-        Post postEntity = postService.findPost(id);
+        Post postEntity = postService.getPost(id);
 
         postEntity = postEntity.toBuilder()
                 .title(modifyDto.getTitle())
                 .subtitle(modifyDto.getSubtitle())
                 .content(modifyDto.getContent())
                 .isPublic(modifyDto.isPublic())
+                .isPaid(modifyDto.isPaid())
                 .build();
 
         postEntity = postService.modifyPost(postEntity, userPrincipal.getUsername());
@@ -89,6 +94,28 @@ public class PostController {
         }
 
         Post postEntity = postService.findPost(id, memberEntity);
+
+        return ResponseEntity.ok(
+                new ResponseDto<>(
+                        HttpStatus.OK.value(),
+                        "상세 글 조회 성공",
+                        new PostDto(postEntity)
+                )
+        );
+    }
+
+    @GetMapping("/b/{username}/{postId}")
+    public ResponseEntity<?> userPostDetail(@PathVariable("username") String username,
+                                            @PathVariable("postId") Long postId) {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        Member memberEntity = null;
+
+        if (principal instanceof UserPrincipal) {
+            memberEntity = memberService.getMember(((UserPrincipal) principal).getUsername());
+        }
+
+        Post postEntity = postService.findPost(username, postId, memberEntity);
 
         return ResponseEntity.ok(
                 new ResponseDto<>(
@@ -324,7 +351,12 @@ public class PostController {
             throw new UserNotFoundException("회원을 찾을 수 없어요.");
         }
 
-        Post postEntity = postService.write(PostDto.toEntity(new PostDto(reqDto, memberEntity)));
+        Post post = PostDto.toEntity(new PostDto(reqDto, memberEntity));
+        post = post.toBuilder().writer(memberEntity).build();
+
+        log.info("post username: {}", post.getWriter().getUsername());
+
+        Post postEntity = postService.write(post);
 
         return ResponseEntity.ok(
                 new ResponseDto<>(
