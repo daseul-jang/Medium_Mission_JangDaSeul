@@ -11,7 +11,7 @@ export default async function layout({
   const user = session?.user;
 
   return (
-    <section className='max-w-screen-lg w-full h-full flex flex-col md:flex-row md:justify-center'>
+    <section className='max-w-screen-lg w-full h-full flex flex-col md:flex-row md:justify-center pt-[64px]'>
       <div className='basis-1/4 max-md:sticky max-md:top-0 max-md:shadow-sm bg-white z-[1] w-full h-full'>
         <div className='w-full p-5 bg-base-100 md:my-10 rounded-md flex flex-col gap-10'>
           <div className='flex flex-col md:flex-row w-full items-center gap-3'>

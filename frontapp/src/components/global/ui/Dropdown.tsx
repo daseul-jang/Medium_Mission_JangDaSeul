@@ -6,6 +6,7 @@ import Menu from './Menu';
 import WriteBtn from './button/WriteBtn';
 import Underline from './Underline';
 import Link from 'next/link';
+import Badge from './Badge';
 
 export default function Dropdown({ user }: { user: AuthMember }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -36,7 +37,7 @@ export default function Dropdown({ user }: { user: AuthMember }) {
           alt=''
           className='rounded-full border border-zinc-400'
         />
-        <div className='absolute top-0 w-full h-full hover:bg-black/30 rounded-full cursor-pointer'></div>
+        <div className='hidden md:block absolute top-0 w-full h-full hover:bg-black/30 rounded-full cursor-pointer'></div>
       </div>
       {isOpen && (
         <ul
@@ -63,22 +64,17 @@ export default function Dropdown({ user }: { user: AuthMember }) {
               <span>Sign out</span>
             </button>
           </Menu>
-          {/* <li className='border-b' onClick={() => setIsOpen(false)}>
-            <a>Item 1</a>
-          </li>
-          <li className='' onClick={() => setIsOpen(false)}>
-            <button
-              className='flex flex-col items-start'
-              onClick={() =>
-                signOut({
-                  callbackUrl: '/',
-                })
-              }
-            >
-              <span>Sign out</span>
+          <Underline />
+          <Menu hover={false}>
+            <div className='flex justify-between h-full items-center'>
               <span>{user.username}</span>
-            </button>
-          </li> */}
+              {user.role === 'PAID' && (
+                <Badge color='green' outline={false}>
+                  멤버십
+                </Badge>
+              )}
+            </div>
+          </Menu>
         </ul>
       )}
     </div>

@@ -25,7 +25,10 @@ public class UserPrincipal implements UserDetails {
                 singletonList(
                         new SimpleGrantedAuthority(
                                 "admin".equals(member.getUsername()) ?
-                                        MemberRole.ADMIN.getValue() : MemberRole.USER.getValue()
+                                        MemberRole.ADMIN.getValue() : (
+                                        member.isPaid() ?
+                                                MemberRole.PAID.getValue() : MemberRole.USER.getValue()
+                                )
                         )
                 );
 

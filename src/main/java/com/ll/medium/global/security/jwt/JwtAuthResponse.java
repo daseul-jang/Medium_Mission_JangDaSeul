@@ -1,5 +1,6 @@
 package com.ll.medium.global.security.jwt;
 
+import com.ll.medium.domain.member.member.dto.MemberDto;
 import com.ll.medium.domain.member.member.entity.Member;
 import lombok.*;
 
@@ -13,5 +14,5 @@ public class JwtAuthResponse {
     private final Long accessTokenExp;
     private final String refreshToken;
     private final String tokenType = "Bearer";
-    private Member member;
+    private MemberDto member;
 }

@@ -16,11 +16,12 @@ export async function PUT(req: NextRequest, context: Context) {
     return;
   }
 
-  const { title, subtitle, content, isPublic }: WritePost = await req.json();
+  const { title, subtitle, content, isPublic, isPaid }: WritePost =
+    await req.json();
 
   return modifyPost(
     Number(context.params.id),
-    { title, subtitle, content, isPublic },
+    { title, subtitle, content, isPublic, isPaid },
     accessToken!!
   )
     .then((res) => NextResponse.json(res))

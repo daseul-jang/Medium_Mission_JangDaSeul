@@ -20,16 +20,16 @@ export default async function layout({
   }
 
   return (
-    <div className='w-full h-full'>
-      <div className='w-full h-full flex flex-col items-center justify-start'>
-        <div className='sticky top-0 z-[1] basis-2/5 w-full h-full flex flex-col justify-center items-center gap-5 shadow-sm bg-white p-10'>
+    <div className='w-full h-full flex flex-col items-center justify-start pt-[64px]'>
+      <div className='sticky top-0 z-[1] w-full h-fit flex flex-col justify-center items-center shadow-sm bg-white p-5'>
+        <div className='w-full h-full flex justify-center items-center py-2'>
           <div className='bg-base-300 rounded-full w-28 h-28'></div>
+        </div>
+        <div className='py-4'>
           <MemberInfo username={username} />
         </div>
-        <div className='basis-3/5 w-full h-full flex flex-col items-center'>
-          {children}
-        </div>
       </div>
+      <div className='w-full h-full flex flex-col items-center'>{children}</div>
     </div>
   );
 }

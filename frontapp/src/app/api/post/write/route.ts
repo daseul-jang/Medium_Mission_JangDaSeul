@@ -15,9 +15,10 @@ export async function POST(req: NextRequest) {
     return;
   }
 
-  const { title, subtitle, content, isPublic }: WritePost = await req.json();
+  const { title, subtitle, content, isPublic, isPaid }: WritePost =
+    await req.json();
 
-  return addPost({ title, subtitle, content, isPublic }, accessToken!!)
+  return addPost({ title, subtitle, content, isPublic, isPaid }, accessToken!!)
     .then((res) => NextResponse.json(res))
     .catch((error) => new Response(JSON.stringify(error), { status: 500 }));
 }

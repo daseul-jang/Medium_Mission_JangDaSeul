@@ -1,21 +1,28 @@
 'use client';
 
 import { useLatestList } from '@/hooks/post';
+import { useWindowSize } from '@/hooks/useWindowSize';
 import { Post } from '@/model/post';
 import Link from 'next/link';
 import { useState } from 'react';
+import Badge from '../global/ui/Badge';
+import ErrorMessage from '../global/error/ErrorMessage';
+import LoadingSpinnerCircle from '../global/ui/icon/LoadingSpinnerCircle';
 
 export default function LatestList() {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const { data, isLoading, isError, error } = useLatestList();
+  const { data, isLoading, isFetching, isError, error } = useLatestList();
   const posts = data?.data?.content;
+
+  const { width } = useWindowSize();
+  const itemCount = width < 640 ? 2 : 6;
 
   const handlePrevClick = (e: React.MouseEvent) => {
     e.preventDefault();
 
     // 이전 버튼 클릭 핸들러
     setCurrentIndex((prevIndex) =>
-      prevIndex > 0 ? prevIndex - 1 : Math.ceil(posts.length / 6) - 1
+      prevIndex > 0 ? prevIndex - 1 : Math.ceil(posts.length / itemCount) - 1
     );
   };
 
@@ -24,14 +31,25 @@ export default function LatestList() {
 
     // 다음 버튼 클릭 핸들러
     setCurrentIndex((prevIndex) =>
-      prevIndex < Math.ceil(posts.length / 6) - 1 ? prevIndex + 1 : 0
+      prevIndex < Math.ceil(posts.length / itemCount) - 1 ? prevIndex + 1 : 0
     );
   };
 
-  const currentPosts = posts?.slice(currentIndex * 6, (currentIndex + 1) * 6);
+  const currentPosts = posts?.slice(
+    currentIndex * itemCount,
+    (currentIndex + 1) * itemCount
+  );
+
+  if (isLoading || isFetching) {
+    return (
+      <div className='h-[200px] flex justify-center items-center'>
+        <span className='loading loading-spinner loading-lg text-success'></span>
+      </div>
+    );
+  }
 
   if (!data || !currentPosts) {
-    return <>데이터가 없습니다.</>;
+    return <ErrorMessage message='데이터를 찾을 수 없어요.. 🥲' />;
   }
 
   return (
@@ -56,19 +74,26 @@ export default function LatestList() {
             <li className='card card-side bg-base-100 rounded-sm w-full h-full p-3 shadow-md'>
               <figure className='basis-1/6'>
                 <span className='w-full flex font-bold text-3xl text-base-300'>
-                  {(currentIndex * 6 + index + 1).toString().padStart(2, '0')}
+                  {(currentIndex * itemCount + index + 1)
+                    .toString()
+                    .padStart(2, '0')}
                 </span>
               </figure>
               <div className='card-body p-2 basis-5/6'>
                 <span className='card-actions justify-start text-xs'>
-                  {post.writer.username}
+                  {post.writerUsername}
                 </span>
                 <h3 className='card-title text-lg h-full max-h-14 overflow-ellipsis overflow-hidden line-clamp-2'>
                   {post.title}
                 </h3>
-                <span className='card-actions text-xs'>
-                  {getDate(post.createDate)}
-                </span>
+                <div className='card-actions items-center justify-between'>
+                  <span className='text-xs'>{getDate(post.createDate)}</span>
+                  {post.isPaid && (
+                    <Badge color='green' outline={false}>
+                      멤버십
+                    </Badge>
+                  )}
+                </div>
               </div>
             </li>
           </Link>

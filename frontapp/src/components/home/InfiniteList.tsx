@@ -15,11 +15,11 @@ import InfiniteListItem from './InfiniteListItem';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import Link from 'next/link';
 import LoadingSpinnerDots from '../global/ui/icon/LoadingSpinnerDots';
+import ErrorMessage from '../global/error/ErrorMessage';
 
 export default function InfiniteList() {
   const { data, hasNextPage, isFetchingNextPage, fetchNextPage, status } =
     useInfiniteList();
-  console.log(data);
 
   const cache = useRef(
     new CellMeasurerCache({
@@ -62,7 +62,11 @@ export default function InfiniteList() {
       const post = posts[index];
 
       if (post?.cause) {
-        return <>서버와 연결이 끊어짐</>;
+        return <ErrorMessage message='서버와 연결이 끊겼어요 😱' />;
+      }
+
+      if (!post) {
+        return <></>;
       }
 
       return (
@@ -112,7 +116,7 @@ export default function InfiniteList() {
                     rowHeight={cache.current.rowHeight}
                     rowRenderer={rowRenderer}
                     deferredMeasurementCache={cache.current}
-                    overscanRowCount={5}
+                    overscanRowCount={1}
                   />
                 )}
               </AutoSizer>

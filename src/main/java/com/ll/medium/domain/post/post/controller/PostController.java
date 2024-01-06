@@ -1,7 +1,12 @@
 package com.ll.medium.domain.post.post.controller;
 
+import com.ll.medium.domain.member.exception.UserNotFoundException;
+import com.ll.medium.domain.member.member.dto.MemberDto;
 import com.ll.medium.domain.member.member.entity.Member;
 import com.ll.medium.domain.member.member.service.MemberService;
+import com.ll.medium.domain.post.comment.entity.Comment;
+import com.ll.medium.domain.post.comment.service.CommentService;
+import com.ll.medium.domain.post.exception.NoAccessException;
 import com.ll.medium.domain.post.post.dto.ModifyRequestDto;
 import com.ll.medium.domain.post.post.dto.PostDto;
 import com.ll.medium.domain.post.post.dto.WriteRequestDto;
@@ -17,9 +22,11 @@ import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Log4j2
 @RestController
@@ -28,14 +35,18 @@ import java.util.List;
 public class PostController {
     private final PostService postService;
     private final MemberService memberService;
+    private final CommentService commentService;
 
     @DeleteMapping("/{id}/delete")
     public ResponseEntity<?> postDelete(@AuthenticationPrincipal UserPrincipal userPrincipal,
                                         @PathVariable("id") Long id) {
-        log.info("post delete id: {}", id);
         Member memberEntity = memberService.getMember(userPrincipal.getUsername());
-        Post postEntity = postService.findPost(id);
 
+        if (memberEntity == null) {
+            throw new UserNotFoundException("회원을 찾을 수 없어요.");
+        }
+
+        Post postEntity = postService.getPost(id);
         postService.deletePost(postEntity, memberEntity.getUsername());
 
         return ResponseEntity.ok(
@@ -51,14 +62,14 @@ public class PostController {
     public ResponseEntity<?> postModify(@AuthenticationPrincipal UserPrincipal userPrincipal,
                                         @PathVariable("id") Long id,
                                         @RequestBody ModifyRequestDto modifyDto) {
-        log.info(modifyDto.toString());
-        Post postEntity = postService.findPost(id);
+        Post postEntity = postService.getPost(id);
 
         postEntity = postEntity.toBuilder()
                 .title(modifyDto.getTitle())
                 .subtitle(modifyDto.getSubtitle())
                 .content(modifyDto.getContent())
                 .isPublic(modifyDto.isPublic())
+                .isPaid(modifyDto.isPaid())
                 .build();
 
         postEntity = postService.modifyPost(postEntity, userPrincipal.getUsername());
@@ -74,7 +85,37 @@ public class PostController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> postDetail(@PathVariable("id") Long id) {
-        Post postEntity = postService.findPost(id);
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        Member memberEntity = null;
+
+        if (principal instanceof UserPrincipal) {
+            memberEntity = memberService.getMember(((UserPrincipal) principal).getUsername());
+        }
+
+        Post postEntity = postService.findPost(id, memberEntity);
+
+        return ResponseEntity.ok(
+                new ResponseDto<>(
+                        HttpStatus.OK.value(),
+                        "상세 글 조회 성공",
+                        new PostDto(postEntity)
+                )
+        );
+    }
+
+    @GetMapping("/b/{username}/{postId}")
+    public ResponseEntity<?> userPostDetail(@PathVariable("username") String username,
+                                            @PathVariable("postId") Long postId) {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        Member memberEntity = null;
+
+        if (principal instanceof UserPrincipal) {
+            memberEntity = memberService.getMember(((UserPrincipal) principal).getUsername());
+        }
+
+        Post postEntity = postService.findPost(username, postId, memberEntity);
 
         return ResponseEntity.ok(
                 new ResponseDto<>(
@@ -90,6 +131,11 @@ public class PostController {
                                              @RequestParam(value = "cursor", required = false) Long cursor,
                                              @RequestParam(value = "limit", defaultValue = "5") Integer limit) {
         Member memberEntity = memberService.getMember(username);
+
+        if (memberEntity == null) {
+            throw new UserNotFoundException("회원을 찾을 수 없어요.");
+        }
+
         List<Post> myPostEntities = postService.findByMemberIdPublicPosts(memberEntity.getId(), cursor, limit);
 
         return myPostsResponseEntity(myPostEntities, username + "의 공개 글 목록 조회 성공 (mobile)");
@@ -99,6 +145,11 @@ public class PostController {
     public ResponseEntity<?> userPublicPosts(@PathVariable("username") String username,
                                              Pageable pageable) {
         Member memberEntity = memberService.getMember(username);
+
+        if (memberEntity == null) {
+            throw new UserNotFoundException("회원을 찾을 수 없어요.");
+        }
+
         Page<Post> postEntities = postService.findByMemberIdPublicPosts(memberEntity.getId(), pageable);
 
         return myPostsResponseEntity(pageable, postEntities, username + "의 공개 글 목록 조회 성공 (pc)");
@@ -113,6 +164,11 @@ public class PostController {
                                             @RequestParam(value = "cursor", required = false) Long cursor,
                                             @RequestParam(value = "limit", defaultValue = "5") Integer limit) {
         Member memberEntity = memberService.getMember(userPrincipal.getUsername());
+
+        if (memberEntity == null) {
+            throw new UserNotFoundException("회원을 찾을 수 없어요.");
+        }
+
         List<Post> myPostEntities = postService.findByMemberIdPrivatePosts(memberEntity.getId(), cursor, limit);
 
         return myPostsResponseEntity(myPostEntities, "나의 비공개 글 목록 조회 성공");
@@ -123,6 +179,11 @@ public class PostController {
                                            @RequestParam(value = "cursor", required = false) Long cursor,
                                            @RequestParam(value = "limit", defaultValue = "5") Integer limit) {
         Member memberEntity = memberService.getMember(userPrincipal.getUsername());
+
+        if (memberEntity == null) {
+            throw new UserNotFoundException("회원을 찾을 수 없어요.");
+        }
+
         List<Post> myPostEntities = postService.findByMemberIdPublicPosts(memberEntity.getId(), cursor, limit);
 
         return myPostsResponseEntity(myPostEntities, "나의 공개 글 목록 조회 성공");
@@ -132,9 +193,12 @@ public class PostController {
     public ResponseEntity<?> myAllPosts(@AuthenticationPrincipal UserPrincipal userPrincipal,
                                         @RequestParam(value = "cursor", required = false) Long cursor,
                                         @RequestParam(value = "limit", defaultValue = "5") Integer limit) {
-        log.info("myAllPosts");
-        log.info("cursor: {}", cursor);
         Member memberEntity = memberService.getMember(userPrincipal.getUsername());
+
+        if (memberEntity == null) {
+            throw new UserNotFoundException("회원을 찾을 수 없어요.");
+        }
+
         List<Post> myPostEntities = postService.findByMemberIdAllPosts(memberEntity.getId(), cursor, limit);
 
         return myPostsResponseEntity(myPostEntities, "나의 전체 글 목록 조회 성공");
@@ -164,6 +228,11 @@ public class PostController {
     public ResponseEntity<?> myPrivatePosts(@AuthenticationPrincipal UserPrincipal userPrincipal,
                                             Pageable pageable) {
         Member memberEntity = memberService.getMember(userPrincipal.getUsername());
+
+        if (memberEntity == null) {
+            throw new UserNotFoundException("회원을 찾을 수 없어요.");
+        }
+
         Page<Post> postEntities = postService.findByMemberIdPrivatePosts(memberEntity.getId(), pageable);
 
         return myPostsResponseEntity(pageable, postEntities, "나의 비공개 글 목록 조회 성공");
@@ -173,6 +242,11 @@ public class PostController {
     public ResponseEntity<?> myPublicPosts(@AuthenticationPrincipal UserPrincipal userPrincipal,
                                            Pageable pageable) {
         Member memberEntity = memberService.getMember(userPrincipal.getUsername());
+
+        if (memberEntity == null) {
+            throw new UserNotFoundException("회원을 찾을 수 없어요.");
+        }
+
         Page<Post> postEntities = postService.findByMemberIdPublicPosts(memberEntity.getId(), pageable);
 
         return myPostsResponseEntity(pageable, postEntities, "나의 공개 글 목록 조회 성공");
@@ -182,6 +256,11 @@ public class PostController {
     public ResponseEntity<?> myAllPosts(@AuthenticationPrincipal UserPrincipal userPrincipal,
                                         Pageable pageable) {
         Member memberEntity = memberService.getMember(userPrincipal.getUsername());
+
+        if (memberEntity == null) {
+            throw new UserNotFoundException("회원을 찾을 수 없어요.");
+        }
+
         Page<Post> postEntities = postService.findByMemberIdAllPosts(memberEntity.getId(), pageable);
 
         return myPostsResponseEntity(pageable, postEntities, "나의 글 목록 조회 성공");
@@ -207,14 +286,12 @@ public class PostController {
     public ResponseEntity<?> latestList() {
         Page<Post> postEntities = postService.findLatestPosts();
         List<PostDto> postDtos = postEntities.stream().map(PostDto::new).toList();
-        log.info(postDtos.toString());
 
         Page<PostDto> pagePosts = new PageImpl<>(
                 postDtos,
                 postEntities.getPageable(),
                 postEntities.getTotalElements());
 
-        log.info(pagePosts.getContent().getFirst().getWriter().getUsername());
         return ResponseEntity.ok(
                 new ResponseDto<>(
                         HttpStatus.OK.value(),
@@ -248,9 +325,7 @@ public class PostController {
     @GetMapping("/infinite-list")
     public ResponseEntity<?> infiniteList(@RequestParam(value = "cursor", required = false) Long cursor,
                                           @RequestParam(value = "limit", defaultValue = "20") Integer limit) {
-        log.info("cursor : {}", cursor);
         List<Post> postEntities = postService.findInfiniteList(cursor, limit);
-        log.info(postEntities.toString());
 
         if (postEntities.isEmpty()) {
             return ResponseEntity.noContent().build();
@@ -270,11 +345,18 @@ public class PostController {
     @PostMapping("/write")
     public ResponseEntity<?> write(@AuthenticationPrincipal UserPrincipal userPrincipal,
                                    @Valid @RequestBody WriteRequestDto reqDto) {
-        log.info("write controller username: {}", userPrincipal.getUsername());
-        log.info("write controller reqDto: {}", reqDto.toString());
         Member memberEntity = memberService.getMember(userPrincipal.getUsername());
-        log.info("write controller memberEntity: {}", memberEntity.getUsername());
-        Post postEntity = postService.write(PostDto.toEntity(new PostDto(reqDto, memberEntity)));
+
+        if (memberEntity == null) {
+            throw new UserNotFoundException("회원을 찾을 수 없어요.");
+        }
+
+        Post post = PostDto.toEntity(new PostDto(reqDto, memberEntity));
+        post = post.toBuilder().writer(memberEntity).build();
+
+        log.info("post username: {}", post.getWriter().getUsername());
+
+        Post postEntity = postService.write(post);
 
         return ResponseEntity.ok(
                 new ResponseDto<>(

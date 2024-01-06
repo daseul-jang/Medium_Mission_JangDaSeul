@@ -17,6 +17,7 @@ import {
   WindowScroller,
 } from 'react-virtualized';
 import LoadingSpinnerCircle from '../global/ui/icon/LoadingSpinnerCircle';
+import ErrorMessage from '../global/error/ErrorMessage';
 
 interface Props {
   children: (post: Post) => React.ReactNode;
@@ -27,6 +28,7 @@ interface Props {
   fetchNextPage: (
     options?: FetchNextPageOptions | undefined
   ) => Promise<InfiniteQueryObserverResult<InfiniteData<any, unknown>, Error>>;
+  isAuth: boolean;
 }
 
 export default function MemberInfiniteList({
@@ -36,6 +38,7 @@ export default function MemberInfiniteList({
   hasNextPage,
   isFetchingNextPage,
   fetchNextPage,
+  isAuth,
 }: Props) {
   const cache = useRef(
     new CellMeasurerCache({
@@ -63,9 +66,6 @@ export default function MemberInfiniteList({
     [data]
   );
 
-  console.log('posts');
-  console.log(posts);
-
   const loadMoreRows = isFetchingNextPage
     ? () => new Promise((resolve, reject) => {})
     : ({ startIndex, stopIndex }: IndexRange) => fetchNextPage();
@@ -79,7 +79,7 @@ export default function MemberInfiniteList({
       const post = posts[index];
 
       if (post?.cause) {
-        return <>서버와 연결이 끊어짐</>;
+        return <ErrorMessage message='서버와 연결이 끊겼어요 😱' />;
       }
 
       if (!post) {
@@ -95,14 +95,22 @@ export default function MemberInfiniteList({
           rowIndex={index}
         >
           {({ measure }) => (
-            <Link href={`/posts/${post?.id}`} style={style} onLoad={measure}>
+            <Link
+              href={
+                isAuth
+                  ? `/posts/${post.id}`
+                  : `/user/${post.writerUsername}/${post.id}`
+              }
+              style={style}
+              onLoad={measure}
+            >
               {children(post)}
             </Link>
           )}
         </CellMeasurer>
       );
     },
-    [posts, children]
+    [posts, children, isAuth]
   );
 
   if (status === 'pending') return <LoadingSpinnerCircle />;

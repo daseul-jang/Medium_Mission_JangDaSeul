@@ -137,13 +137,13 @@ export const usePostModify = () => {
   return { submitPostModify, isPending, isError };
 };
 
-export const usePostDetail = (id: string) => {
-  const { data, isLoading, isError, error } = useQuery({
+export const usePostDetail = (id: string, username?: string) => {
+  const { data, isLoading, isFetching, isError, error } = useQuery({
     queryKey: ['post'],
-    queryFn: () => fetchPostDetail(id),
+    queryFn: () => fetchPostDetail(id, username),
   });
 
-  return { data, isLoading, isError, error };
+  return { data, isLoading, isFetching, isError, error };
 };
 
 export const useInfiniteList = () => {
@@ -189,12 +189,12 @@ export const useAllList = (page: number, size: number) => {
 };
 
 export const useLatestList = () => {
-  const { data, isLoading, isError, error } = useQuery({
+  const { data, isLoading, isFetching, isError, error } = useQuery({
     queryKey: ['posts'],
     queryFn: getLatestList,
   });
 
-  return { data, isLoading, isError, error };
+  return { data, isLoading, isFetching, isError, error };
 };
 
 export const usePostWrite = () => {

@@ -13,8 +13,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
     private final MemberRepository memberRepository;
 
-    public Member getMember(final String username) {
+    /*public Member getMember(final String username) {
         return memberRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException("회원을 찾을 수 없어요."));
+    }*/
+
+    public Member getMember(final String username) {
+        return memberRepository.findByUsername(username)
+                .orElse(null);
     }
 }

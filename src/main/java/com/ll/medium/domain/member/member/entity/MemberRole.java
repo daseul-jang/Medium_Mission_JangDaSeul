@@ -4,6 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum MemberRole {
+    PAID("ROLE_PAID"),
     USER("ROLE_USER"),
     ADMIN("ROLE_ADMIN");
 
@@ -12,5 +13,4 @@ public enum MemberRole {
     MemberRole(String value) {
         this.value = value;
     }
-
 }

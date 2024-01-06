@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Long>, PostRepositoryCustom {
     Page<Post> findByIsPublicTrue(Pageable pageable);
@@ -17,6 +18,8 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
     Page<Post> findByWriter_Id(Long id, Pageable pageable);
 
     Page<Post> findByIsPublicFalseAndWriter_Id(Long memberId, Pageable sortedPageable);
+
+    Optional<Post> findByWriter_UsernameAndId(String username, Long id);
 
     Post findTopByIdLessThanOrderByIdDesc(Long id);
 }

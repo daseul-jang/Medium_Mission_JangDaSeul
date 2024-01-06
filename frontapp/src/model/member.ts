@@ -2,7 +2,7 @@ export interface Member {
   id: number;
   username: string;
   password: string;
-  role: string;
+  role: 'USER' | 'PAID' | 'ADMIN';
   createDate: string;
   modifyDate: string;
   refreshToken: RefreshToken;

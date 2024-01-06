@@ -14,4 +14,5 @@ public class WriteRequestDto {
     private String subtitle;
     private String content;
     private boolean isPublic;
+    private boolean isPaid;
 }

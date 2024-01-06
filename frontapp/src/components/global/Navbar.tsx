@@ -56,7 +56,7 @@ export default function Navbar() {
         <Link href='/' className='text-3xl font-custom text-black'>
           Medium
         </Link>
-        <div className='max-sm:hidden relative bg-zinc-100 rounded-full'>
+        <div className='hidden md:block relative bg-zinc-100 rounded-full'>
           <div className='absolute flex items-center inset-y-0 left-0 pl-3 pointer-events-none'>
             <SearchIcon style='text-neutral-600' />
           </div>

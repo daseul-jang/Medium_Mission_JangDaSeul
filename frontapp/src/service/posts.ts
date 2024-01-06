@@ -24,8 +24,33 @@ export const deletePost = async (id: string, accessToken: string) => {
   }
 };
 
-export const getMemberPosts = async (url: string) => {
+export const getMemberPost = async (
+  username: string,
+  id: string,
+  accessToken: string
+) => {
   console.log('포스트 서비스 - 회원 게시글 조회');
+
+  try {
+    const res = await fetch(`${POST_URL}/b/${username}/${id}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    const data = await res.json();
+    console.log(data);
+
+    return data;
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
+};
+
+export const getMemberPosts = async (url: string) => {
+  console.log('포스트 서비스 - 회원 게시글 목록 조회');
 
   try {
     const res = await fetch(`${POST_URL}/b/${url}`, {
@@ -72,12 +97,13 @@ export const modifyPost = async (
   }
 };
 
-export const getPostDetail = async (id: string) => {
+export const getPostDetail = async (id: string, accessToken?: string) => {
   console.log('포스트 서비스 - 상세글');
   try {
     const res = await fetch(`${POST_URL}/${id}`, {
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
       },
       cache: 'no-store',
     });
@@ -137,11 +163,7 @@ export const getAllList = async (page: number, size: number) => {
       cache: 'no-store',
     });
 
-    //console.log(res.status);
-
     const data = await res.json();
-
-    //console.log(data);
 
     return data;
   } catch (err) {
@@ -161,9 +183,6 @@ export const getLatestList = async () => {
     });
 
     const data = await res.json();
-
-    /* console.log(data);
-    console.log(data.data.content[0]); */
 
     return data;
   } catch (err) {
@@ -186,8 +205,6 @@ export const addPost = async (post: WritePost, accessToken: string) => {
     });
 
     const data = await res.json();
-
-    //console.log(data);
 
     return data;
   } catch (err) {

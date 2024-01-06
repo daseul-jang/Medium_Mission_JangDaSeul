@@ -16,6 +16,7 @@ export const usePostForm = ({
 }: Props) => {
   const [post, setPost] = useState(initialPost);
   const [isPublic, setIsPublic] = useState(true);
+  const [isPaid, setIsPaid] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -32,6 +33,14 @@ export const usePostForm = ({
 
   const privateHandler = () => {
     setIsPublic(false);
+  };
+
+  const paidHandler = () => {
+    setIsPaid(true);
+  };
+
+  const noPaidHandler = () => {
+    setIsPaid(false);
   };
 
   const openModalHandler = () => {
@@ -56,6 +65,7 @@ export const usePostForm = ({
       const updatedPost = {
         ...prevPost,
         isPublic,
+        isPaid,
       };
 
       if (type === 'modify') {
@@ -72,10 +82,13 @@ export const usePostForm = ({
     type,
     post,
     isPublic,
+    isPaid,
     modalOpen,
     textareaRef,
     publicHandler,
     privateHandler,
+    paidHandler,
+    noPaidHandler,
     openModalHandler,
     closeModalHandler,
     handleOnChange,

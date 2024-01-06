@@ -1,5 +1,5 @@
+import { Comment } from './comment';
 import { Cause } from './common';
-import { Member } from './member';
 
 export interface Post {
   id: number;
@@ -7,11 +7,17 @@ export interface Post {
   subtitle: string;
   content: string;
   isPublic: boolean;
+  isPaid: boolean;
   createDate: string;
   modifyDate: string;
-  writer: Member;
+  writerId: number;
+  writerUsername: string;
+  comments?: Comment[];
   cause?: Cause;
 }
 
 export interface WritePost
-  extends Pick<Post, 'title' | 'subtitle' | 'content' | 'isPublic'> {}
+  extends Pick<
+    Post,
+    'title' | 'subtitle' | 'content' | 'isPublic' | 'isPaid'
+  > {}

@@ -25,6 +25,8 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private String password;
 
+    private boolean isPaid = false;
+
     @Enumerated(EnumType.STRING)
     private MemberRole role;
 
